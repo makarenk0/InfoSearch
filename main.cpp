@@ -4,27 +4,35 @@
 
 int main()
 {
-    const int fileNumber = 10;
-   
-    const std::string filenames[fileNumber] = { "book1", "book2", "book3", "book4", "book5", "book6", "book7", "book8", "book9", "book10"};
+    const std::string dictionaryName = "biwordIndex.txt";
 
-    const std::string dictionaryName = "result.txt";
+    const std::string directoryPath = "Books\\";
 
-    auto begin = clock();   //count time 
-    generateDictionary(filenames, fileNumber);
-    auto end = clock();  //end counting
-    double elapsedMs = double(end * 1.0 - begin) * 1000.0 / CLOCKS_PER_SEC;
-    std::cout << "Time spend in millis: " << elapsedMs << std::endl;
+    //auto begin = clock();   //count time 
+    //invertedIndex(directoryPath);
+    //auto end = clock();  //end counting
+    //double elapsedMs = double(end * 1.0 - begin) * 1000.0 / CLOCKS_PER_SEC;
+    //std::cout << "Time spend in millis: " << elapsedMs << std::endl;
 
+
+   /* //boolean search
     std::map<std::string, std::set<short>> read;
+    int filesNumber = 0;
+    readDictionary(read, dictionaryName, filesNumber);
+    std::set<short> requestRes = booleanSearch("( zone AND zones AND NOT zoom AND NOT zigzag )", read, filesNumber);*/
 
-    readDictionary(read, dictionaryName);
 
-    std::set<short> requestRes = booleanSearch("( zone AND zones )", read, fileNumber);
+    // //phrase search
+    //std::map<std::string, std::set<short>> read;
+    //int filesNumber = 0;
+    //readDictionary(read, dictionaryName, filesNumber);
+    //std::set<short> requestRes = phraseSearch("zeal Some", read, filesNumber);
     
+
+    /* //output
     for (auto i : requestRes) {
         std::cout << i << std::endl;
-    }
+    }*/
  
     return 0;
 }

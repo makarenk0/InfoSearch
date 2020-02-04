@@ -39,3 +39,6 @@
 *.iobj
 *.pdb
 .vs/InfoPractice1/v16/.suo
+*.opendb
+*.idb
+*.ilk
