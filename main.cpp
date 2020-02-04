@@ -33,6 +33,13 @@ int main()
     for (auto i : requestRes) {
         std::cout << i << std::endl;
     }*/
+
+
+    auto begin = clock();   //count time 
+    positionalIndex(directoryPath);
+    auto end = clock();  //end counting
+    double elapsedMs = double(end * 1.0 - begin) * 1000.0 / CLOCKS_PER_SEC;
+    std::cout << "Time spend in millis: " << elapsedMs << std::endl;
  
     return 0;
 }

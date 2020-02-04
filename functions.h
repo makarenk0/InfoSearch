@@ -9,7 +9,7 @@
 #include <vector>
 #include <windows.h>
 
-typedef std::map<std::string, std::pair<int, std::map<int , std::set<int>>>> PositionalIndex;
+typedef std::map<std::string, std::pair<int, std::map<short , std::set<int>>>> PositionalIndex;
 
 enum binOperations { AND, OR };
 
@@ -21,11 +21,13 @@ void biwordIndex(const std::string& directoryPath);
 
 void positionalIndex(const std::string& directoryPath);
 
-void addWordToDictionary(std::map<std::string, std::set<short>>& dictionary, std::string word, short& bookNumber, int& termsNumber);
+void addWordToDictionary(std::map<std::string, std::set<short>>& dictionary, const std::string& word, short& bookNumber);
 
-void addWordToDictionary(std::map<std::string, std::set<short>>& dictionary, std::string word, short& bookNumber);
+void addWordToDictionary(PositionalIndex& dictionary, const std::string& word, const short& bookNumber, const int& position);
 
 void printInFile(std::map<std::string, std::set<short>>& dictionary, const int& allFilesNumber, const std::string& dicName);
+
+void printInFile(PositionalIndex& dictionary, const int& allFilesNumber, const std::string& dicName);
 
 void readDictionary(std::map<std::string, std::set<short>>& result, const std::string dictionaryName, int& filesNumber);
 

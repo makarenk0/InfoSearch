@@ -93,24 +93,62 @@ void biwordIndex(const std::string& directoryPath)
     printInFile(dictionary, fileNumber, "biwordIndex");
 }
 
-void addWordToDictionary(std::map<std::string, std::set<short>>& dictionary, std::string word, short& bookNumber, int& termsNumber) {
+void positionalIndex(const std::string& directoryPath)
+{
+    std::vector<std::string> fileNames = filesInDir(directoryPath);
+    int fileNumber = fileNames.size();
+
+    PositionalIndex dictionary;
+    std::ifstream file;
+   
+
+    for (short i = 0; i < fileNumber; i++) {
+        file.open(directoryPath + fileNames[i]);
+        std::string word = "";
+        int position = 0;
+        char buf;
+        while (!file.eof()) {
+            buf = file.get();
+
+            if (buf < 65 || buf>122) {
+                if (word != "") {
+                    addWordToDictionary(dictionary, word, i, position);
+                    ++position;
+                    word = "";
+                }
+            }
+            else {
+                word += buf;
+            }
+        }
+        file.close();
+    }
+    printInFile(dictionary, fileNumber, "positionalIndex");
+}
+
+void addWordToDictionary(std::map<std::string, std::set<short>>& dictionary, const std::string& word, short& bookNumber) {
     std::set<short> arr;
     arr.insert(bookNumber);
     std::pair<std::map<std::string, std::set<short>>::iterator, bool> found = dictionary.insert({ word, arr });
     if (!found.second) {
         found.first->second.insert(bookNumber);
-    }
-    else {
-        ++termsNumber;
     }
 }
 
-void addWordToDictionary(std::map<std::string, std::set<short>>& dictionary, std::string word, short& bookNumber) {
-    std::set<short> arr;
-    arr.insert(bookNumber);
-    std::pair<std::map<std::string, std::set<short>>::iterator, bool> found = dictionary.insert({ word, arr });
-    if (!found.second) {
-        found.first->second.insert(bookNumber);
+void addWordToDictionary(PositionalIndex& dictionary, const std::string& word, const short& bookNumber, const int& position)
+{
+    std::set<int> arr;
+    arr.insert(position);
+    std::map<short, std::set<int>> lists;
+    lists.insert({ bookNumber, arr });
+    std::pair<int, std::map<short, std::set<int>>> frequncy_lists(1, lists);
+    std::pair<PositionalIndex::iterator, bool> foundWord = dictionary.insert({ word, frequncy_lists });
+    if (!foundWord.second) {
+        foundWord.first->second.first +=1;
+        std::pair<std::map<short, std::set<int>>::iterator, bool> foundInDoc = foundWord.first->second.second.insert({ bookNumber , arr});
+        if (!foundInDoc.second) {
+            foundInDoc.first->second.insert(position);
+        }
     }
 }
 
@@ -122,6 +160,26 @@ void printInFile(std::map<std::string, std::set<short>>& dictionary, const int& 
         out << i.first <<" ";
         for (auto j : i.second) {
             out << " " << j;
+        }
+        out << std::endl;
+    }
+    out << std::endl;
+    out.close();
+}
+
+void printInFile(PositionalIndex& dictionary, const int& allFilesNumber, const std::string& dicName)
+{
+    std::ofstream out;
+    out.open("Dictionaries\\" + dicName + ".txt");
+    out << allFilesNumber << std::endl;
+    for (auto i : dictionary) {
+        out << i.first << " : "<< i.second.first<<" ; ";
+        for (auto j : i.second.second) {
+            out << j.first<<" : ";
+            for (auto k : j.second) {
+                out << k << " ";
+            }
+            out << "; ";
         }
         out << std::endl;
     }
