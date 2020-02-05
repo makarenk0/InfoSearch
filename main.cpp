@@ -45,6 +45,12 @@ int main()
     int filesNumber = 0;
     readDictionary(read, dictionaryName, filesNumber);
 
+
+    std::set<short> requestRes = positionalSearch("forest frowned /2 either", read, filesNumber);
+
+    for (auto i : requestRes) {
+        std::cout << i << std::endl;
+    }
  
     return 0;
 }

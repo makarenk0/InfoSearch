@@ -1,6 +1,7 @@
 #include "functions.h"
 
 
+
 std::vector<std::string> filesInDir(const std::string& directoryPath) 
 {
     WIN32_FIND_DATA FindFileData = {0};
@@ -221,17 +222,17 @@ void readDictionary(PositionalIndex& result, const std::string dictionaryName, i
             break;
         }
         PositionalIndex::iterator currentElement = insertMapKey(lineBuf, result);
-
+        std::map<short, std::set<int>>* currentMap = &currentElement->second.second;
         std::string wordBuf = "";
         for (int i = 0; !lineBuf.empty(); i++) {
             readWord(lineBuf, wordBuf);
-            std::set<int> list;
-            std::map<short, std::set<int>> doc_pos;
-            std::map<short, std::set<int>>::iterator current = doc_pos.insert(doc_pos.end(), {(short)(std::stoi(wordBuf)), list });
+            std::set<int> positionList;
+            std::map<short, std::set<int>>::iterator current = currentMap->insert(currentMap->end(), {(short)(std::stoi(wordBuf)), positionList });
             readWord(lineBuf, wordBuf);  //read ":"
+            readWord(lineBuf, wordBuf);  //read first number
             for (int j = 0; wordBuf != ";"; j++) {
-                readWord(lineBuf, wordBuf);
                 current->second.insert(std::stoi(wordBuf));
+                readWord(lineBuf, wordBuf);
             }
         }
     }
@@ -272,6 +273,10 @@ void readWord(std::string& line, std::string& value) {
     else {
         line = line.substr(line.find(" ") + 1, line.length());
     }
+}
+
+void saveReadWord(const std::string& line, std::string& value) {
+    value = line.substr(0, line.find(" "));
 }
 
 std::set<short> booleanSearch(std::string request, std::map<std::string, std::set<short>>& dictionary, const int& docNumber, const bool& biword)
@@ -370,6 +375,43 @@ std::set<short> phraseSearch(std::string request, std::map<std::string, std::set
     return booleanSearch(parsedRequest, dictionary, docNumber, true);
 }
 
+std::set<short> positionalSearch(std::string request, PositionalIndex& dictionary, const int& docNumber)
+{
+    std::stack<std::map<short, std::set<int>>> postLists;
+    while (!request.empty()) {
+        std::string buf1 = "";
+        readWord(request, buf1);
+        if (buf1.at(0) != '/') {
+            std::map<short, std::set<int>> list1 = dictionary.find(buf1)->second.second;
+            postLists.push(list1);
+        }
+        else {
+            int k = std::stoi(buf1.substr(1, buf1.length()));
+            readWord(request, buf1);
+            std::map<short, std::set<int>> list1 = dictionary.find(buf1)->second.second;
+            std::map<short, std::set<int>> list2 = positionalIntersect(list1, postLists.top(), k);
+            postLists.pop();
+            postLists.push(list2);
+        }
+    }
+
+    while (postLists.size() > 1) {
+        std::map<short, std::set<int>> list2 = postLists.top();
+        postLists.pop();
+        std::map<short, std::set<int>> list1 = postLists.top();
+        postLists.pop();
+        postLists.push(positionalIntersect(list1, list2));
+    }
+    
+    std::set<short> result;
+    std::map<short, std::set<int>>::iterator it = postLists.top().begin();
+    while (it != postLists.top().end()) {
+        result.insert(it->first);
+        ++it;
+    }
+    return result;
+}
+
 void sortBinOperations(std::stack<std::set<short>>& lists, std::stack<binOperations>& operations, int currentSize)  // TO DO
 {
     
@@ -416,4 +458,91 @@ void notSearch(const std::set<short>& list1, const int& docNumber, std::set<shor
             ++it1;
         }
     }
+}
+
+std::map<short, std::set<int>> positionalIntersect(std::map<short, std::set<int>>& list1, std::map<short, std::set<int>>& list2, const int& k)
+{
+    std::map<short, std::set<int>> result;
+    std::map<short, std::set<int>>::iterator it1 = list1.begin();
+    std::map<short, std::set<int>>::iterator it2 = list2.begin();
+    while (it1 != list1.end() && it2 != list2.end()) {
+        if (it1->first == it2->first) {
+            std::list<int> positions;
+            std::set<int> plist1 = it1->second;
+            std::set<int> plist2 = it2->second;
+            std::set<int>::iterator pit1 = plist1.begin();
+            std::set<int>::iterator pit2 = plist2.begin();
+            while (pit1 != plist1.end()) {
+                while (pit2 != plist2.end()) {
+                    if (abs(*pit1 - *pit2) <= k) {
+                        positions.push_back(*pit2);
+                    }
+                    else if (*pit2 > * pit1) {
+                        break;
+                    }
+                    ++pit2;
+                }
+                while (!positions.empty() && abs(positions.front() - *pit1) > k) {
+                    positions.pop_front();
+                }
+                std::list<int>::iterator posIt = positions.begin();
+                while (posIt != positions.end()) {
+                    result.insert({ it1->first, {*pit1, *posIt} });
+                    ++posIt;
+                }
+                ++pit1;
+            }
+            ++it1;
+            ++it2;            
+        }
+        else if (it1->first < it2->first) {
+            ++it1;
+        }
+        else {
+            ++it2;
+        }
+    }
+    return result;
+}
+
+std::map<short, std::set<int>> positionalIntersect(std::map<short, std::set<int>>& list1, std::map<short, std::set<int>>& list2)  //TO DO: optimize
+{
+    std::map<short, std::set<int>> result;
+    std::map<short, std::set<int>>::iterator it1 = list1.begin();
+    std::map<short, std::set<int>>::iterator it2 = list2.begin();
+    while (it1 != list1.end() && it2 != list2.end()) {
+        if (it1->first == it2->first) {
+            std::list<int> positions;
+            std::set<int> plist1 = it1->second;
+            std::set<int> plist2 = it2->second;
+            std::set<int>::iterator pit1 = plist1.begin();
+            std::set<int>::iterator pit2 = plist2.begin();
+            while (pit1 != plist1.end()) {
+                while (pit2 != plist2.end()) {
+                    if (*pit2 - *pit1 == 1) {
+                        positions.push_back(*pit2);
+                    }
+                    else if (*pit2 > *pit1) {
+                        break;
+                    }
+                    ++pit2;
+                }
+                std::list<int>::iterator posIt = positions.begin();
+                while (posIt != positions.end()) {
+                    result.insert({ it1->first, {*pit1, *posIt} });
+                    ++posIt;
+                }
+                ++pit1;
+            }
+            ++it1;
+            ++it2;
+        }
+        else if (it1->first < it2->first) {
+            ++it1;
+        }
+        else {
+            ++it2;
+        }
+    }
+    return result;
 }

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <set>
+#include <list>
 #include <map>
 #include <string>
 #include <stack>
@@ -39,9 +40,13 @@ PositionalIndex::iterator insertMapKey(std::string& lineBuf, PositionalIndex& re
 
 void readWord(std::string& line, std::string& value);
 
+void saveReadWord(const std::string& line, std::string& value);
+
 std::set<short> booleanSearch(std::string request, std::map<std::string, std::set<short>>& dictionary, const int& docNumber, const bool& biword = false);
 
 std::set<short> phraseSearch(std::string request, std::map<std::string, std::set<short>>& dictionary, const int& docNumber);
+
+std::set<short> positionalSearch(std::string request, PositionalIndex& dictionary, const int& docNumber);
 
 void sortBinOperations(std::stack<std::set<short>>& lists, std::stack<binOperations>& operations, int currentSize);
 
@@ -50,3 +55,7 @@ void andSearch(const std::set<short>& list1, const std::set<short>& list2, std::
 void orSearch(const std::set<short>& list1, const std::set<short>& list2, std::set<short>& result);
 
 void notSearch(const std::set<short>& list1, const int& docNumber, std::set<short>& result);
+
+std::map<short, std::set<int>> positionalIntersect(std::map<short, std::set<int>>& list1, std::map<short, std::set<int>>& list2, const int& k);
+
+std::map<short, std::set<int>> positionalIntersect(std::map<short, std::set<int>>& list1, std::map<short, std::set<int>>& list2);
