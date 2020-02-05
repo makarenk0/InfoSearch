@@ -224,8 +224,10 @@ void readDictionary(PositionalIndex& result, const std::string dictionaryName, i
 
         std::string wordBuf = "";
         for (int i = 0; !lineBuf.empty(); i++) {
-            readWord(lineBuf, wordBuf);
-            currentElement->second.insert(std::stoi(wordBuf));
+            for (int j = 0; wordBuf != ";"; j++) {
+                readWord(lineBuf, wordBuf);
+                currentElement->second.insert(std::stoi(wordBuf));
+            }
         }
     }
     file.close();
@@ -253,6 +255,7 @@ PositionalIndex::iterator insertMapKey(std::string& lineBuf, PositionalIndex& re
     readWord(lineBuf, wordBuf);
     int frequency = std::stoi(wordBuf);
     std::map<short, std::set<int>> list;
+    
     return result.insert(result.end(), { wordBuf , std::pair<int, std::map<short, std::set<int>>>({frequency, list}) });
 }
 
