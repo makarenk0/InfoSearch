@@ -173,7 +173,7 @@ void printInFile(PositionalIndex& dictionary, const int& allFilesNumber, const s
     out.open("Dictionaries\\" + dicName + ".txt");
     out << allFilesNumber << std::endl;
     for (auto i : dictionary) {
-        out << i.first << " : "<< i.second.first<<" ; ";
+        out << i.first << " "<< i.second.first<<" ; ";
         for (auto j : i.second.second) {
             out << j.first<<" : ";
             for (auto k : j.second) {
@@ -209,6 +209,28 @@ void readDictionary(std::map<std::string, std::set<short>>& result, const std::s
     file.close();
 }
 
+void readDictionary(PositionalIndex& result, const std::string dictionaryName, int& filesNumber)
+{
+    std::string lineBuf;
+    std::ifstream file("Dictionaries\\" + dictionaryName);
+    getline(file, lineBuf);
+    filesNumber = std::stoi(lineBuf);
+    while (true) {
+        getline(file, lineBuf);
+        if (lineBuf.empty()) {
+            break;
+        }
+        PositionalIndex::iterator currentElement = insertMapKey(lineBuf, result);
+
+        std::string wordBuf = "";
+        for (int i = 0; !lineBuf.empty(); i++) {
+            readWord(lineBuf, wordBuf);
+            currentElement->second.insert(std::stoi(wordBuf));
+        }
+    }
+    file.close();
+}
+
 std::map<std::string, std::set<short>>::iterator insertMapKey(std::string& lineBuf, std::map<std::string, std::set<short>>& result)
 {
         std::string wordBuf = "";
@@ -221,6 +243,17 @@ std::map<std::string, std::set<short>>::iterator insertMapKey(std::string& lineB
             lineBuf = lineBuf.substr(1, lineBuf.length());
         }
         return result.insert(result.end(), { wordLine , std::set<short>() });  //return iterator on inserted element
+}
+
+PositionalIndex::iterator insertMapKey(std::string& lineBuf, PositionalIndex& result)
+{
+    std::string wordBuf = "";
+    readWord(lineBuf, wordBuf);
+    std::string wordLine = wordBuf;
+    readWord(lineBuf, wordBuf);
+    int frequency = std::stoi(wordBuf);
+    std::map<short, std::set<int>> list;
+    return result.insert(result.end(), { wordBuf , std::pair<int, std::map<short, std::set<int>>>({frequency, list}) });
 }
 
 void readWord(std::string& line, std::string& value) {

@@ -31,7 +31,11 @@ void printInFile(PositionalIndex& dictionary, const int& allFilesNumber, const s
 
 void readDictionary(std::map<std::string, std::set<short>>& result, const std::string dictionaryName, int& filesNumber);
 
+void readDictionary(PositionalIndex& result, const std::string dictionaryName, int& filesNumber);
+
 std::map<std::string, std::set<short>>::iterator insertMapKey(std::string& lineBuf, std::map<std::string, std::set<short>>& result);
+
+PositionalIndex::iterator insertMapKey(std::string& lineBuf, PositionalIndex& result);
 
 void readWord(std::string& line, std::string& value);
 
