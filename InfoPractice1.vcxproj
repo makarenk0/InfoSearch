@@ -134,11 +134,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Btree.cpp" />
     <ClCompile Include="functions.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PositionalIndex.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Btree.h" />
     <ClInclude Include="functions.h" />
+    <ClInclude Include="PositionalIndex.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

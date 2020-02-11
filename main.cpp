@@ -41,17 +41,21 @@ int main()
     //double elapsedMs = double(end * 1.0 - begin) * 1000.0 / CLOCKS_PER_SEC;
     //std::cout << "Time spend in millis: " << elapsedMs << std::endl; 
 
-    PositionalIndex read;
-    int filesNumber = 0;
-    readDictionary(read, dictionaryName, filesNumber);
+    /*PositionalIndex read(dictionaryName);
 
 
-    std::set<short> requestRes = positionalSearch("forest frowned /2 either", read, filesNumber);
+    std::set<short> requestRes = positionalSearch("forest frowned /2 either", read);
 
     for (auto i : requestRes) {
         std::cout << i << std::endl;
+    }*/
+
+    std::map<std::string, std::set<short>> query = postWildcardQuery("superstitio*");
+
+    for (auto i : query) {
+        std::cout<< i.first << std::endl;
     }
- 
+
     return 0;
 }
 

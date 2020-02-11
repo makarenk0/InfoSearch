@@ -113,7 +113,7 @@ void positionalIndex(const std::string& directoryPath)
 
             if (buf < 65 || buf>122) {
                 if (word != "") {
-                    addWordToDictionary(dictionary, word, i, position);
+                    dictionary.addNewWord(word, 1, i, position);
                     ++position;
                     word = "";
                 }
@@ -124,7 +124,21 @@ void positionalIndex(const std::string& directoryPath)
         }
         file.close();
     }
-    printInFile(dictionary, fileNumber, "positionalIndex");
+    dictionary.printInFile("positionalIndex", fileNumber);
+}
+
+void permutermIndex(Btree* tree, std::map<std::string, std::set<short>>& invertedIndex)
+{
+    for (auto i : invertedIndex) { //iteration through map keys
+        std::string key = i.first;
+        std::string word = key + '$';
+        addWord(tree, word);
+        for (int j = 0; j < key.length(); j++) {  //generating all permutations 
+            word = word + word.at(0);
+            word = word.substr(1, word.length());
+            addWord(tree, word);
+        }
+    }
 }
 
 void addWordToDictionary(std::map<std::string, std::set<short>>& dictionary, const std::string& word, short& bookNumber) {
@@ -136,23 +150,6 @@ void addWordToDictionary(std::map<std::string, std::set<short>>& dictionary, con
     }
 }
 
-void addWordToDictionary(PositionalIndex& dictionary, const std::string& word, const short& bookNumber, const int& position)
-{
-    std::set<int> arr;
-    arr.insert(position);
-    std::map<short, std::set<int>> lists;
-    lists.insert({ bookNumber, arr });
-    std::pair<int, std::map<short, std::set<int>>> frequncy_lists(1, lists);
-    std::pair<PositionalIndex::iterator, bool> foundWord = dictionary.insert({ word, frequncy_lists });
-    if (!foundWord.second) {
-        foundWord.first->second.first +=1;
-        std::pair<std::map<short, std::set<int>>::iterator, bool> foundInDoc = foundWord.first->second.second.insert({ bookNumber , arr});
-        if (!foundInDoc.second) {
-            foundInDoc.first->second.insert(position);
-        }
-    }
-}
-
 void printInFile(std::map<std::string, std::set<short>>& dictionary, const int& allFilesNumber, const std::string& dicName) {
     std::ofstream out;
     out.open("Dictionaries\\"+dicName+".txt");
@@ -161,26 +158,6 @@ void printInFile(std::map<std::string, std::set<short>>& dictionary, const int& 
         out << i.first <<" ";
         for (auto j : i.second) {
             out << " " << j;
-        }
-        out << std::endl;
-    }
-    out << std::endl;
-    out.close();
-}
-
-void printInFile(PositionalIndex& dictionary, const int& allFilesNumber, const std::string& dicName)
-{
-    std::ofstream out;
-    out.open("Dictionaries\\" + dicName + ".txt");
-    out << allFilesNumber << std::endl;
-    for (auto i : dictionary) {
-        out << i.first << " "<< i.second.first<<" ; ";
-        for (auto j : i.second.second) {
-            out << j.first<<" : ";
-            for (auto k : j.second) {
-                out << k << " ";
-            }
-            out << "; ";
         }
         out << std::endl;
     }
@@ -210,35 +187,6 @@ void readDictionary(std::map<std::string, std::set<short>>& result, const std::s
     file.close();
 }
 
-void readDictionary(PositionalIndex& result, const std::string dictionaryName, int& filesNumber)
-{
-    std::string lineBuf;
-    std::ifstream file("Dictionaries\\" + dictionaryName);
-    getline(file, lineBuf);
-    filesNumber = std::stoi(lineBuf);
-    while (true) {
-        getline(file, lineBuf);
-        if (lineBuf.empty()) {
-            break;
-        }
-        PositionalIndex::iterator currentElement = insertMapKey(lineBuf, result);
-        std::map<short, std::set<int>>* currentMap = &currentElement->second.second;
-        std::string wordBuf = "";
-        for (int i = 0; !lineBuf.empty(); i++) {
-            readWord(lineBuf, wordBuf);
-            std::set<int> positionList;
-            std::map<short, std::set<int>>::iterator current = currentMap->insert(currentMap->end(), {(short)(std::stoi(wordBuf)), positionList });
-            readWord(lineBuf, wordBuf);  //read ":"
-            readWord(lineBuf, wordBuf);  //read first number
-            for (int j = 0; wordBuf != ";"; j++) {
-                current->second.insert(std::stoi(wordBuf));
-                readWord(lineBuf, wordBuf);
-            }
-        }
-    }
-    file.close();
-}
-
 std::map<std::string, std::set<short>>::iterator insertMapKey(std::string& lineBuf, std::map<std::string, std::set<short>>& result)
 {
         std::string wordBuf = "";
@@ -251,18 +199,6 @@ std::map<std::string, std::set<short>>::iterator insertMapKey(std::string& lineB
             lineBuf = lineBuf.substr(1, lineBuf.length());
         }
         return result.insert(result.end(), { wordLine , std::set<short>() });  //return iterator on inserted element
-}
-
-PositionalIndex::iterator insertMapKey(std::string& lineBuf, PositionalIndex& result)
-{
-    std::string wordBuf = "";
-    readWord(lineBuf, wordBuf);
-    std::string wordLine = wordBuf;
-    readWord(lineBuf, wordBuf);
-    int frequency = std::stoi(wordBuf);
-    std::map<short, std::set<int>> list;
-    readWord(lineBuf, wordBuf);
-    return result.insert(result.end(), { wordLine , std::pair<int, std::map<short, std::set<int>>>({frequency, list}) });
 }
 
 void readWord(std::string& line, std::string& value) {
@@ -375,20 +311,20 @@ std::set<short> phraseSearch(std::string request, std::map<std::string, std::set
     return booleanSearch(parsedRequest, dictionary, docNumber, true);
 }
 
-std::set<short> positionalSearch(std::string request, PositionalIndex& dictionary, const int& docNumber)
+std::set<short> positionalSearch(std::string request, PositionalIndex& dictionary)
 {
     std::stack<std::map<short, std::set<int>>> postLists;
-    while (!request.empty()) {
+    while (!request.empty()) {  //fill stack with lists
         std::string buf1 = "";
         readWord(request, buf1);
         if (buf1.at(0) != '/') {
-            std::map<short, std::set<int>> list1 = dictionary.find(buf1)->second.second;
+            std::map<short, std::set<int>> list1 = dictionary.getPostingsList(buf1);
             postLists.push(list1);
         }
         else {
             int k = std::stoi(buf1.substr(1, buf1.length()));
             readWord(request, buf1);
-            std::map<short, std::set<int>> list1 = dictionary.find(buf1)->second.second;
+            std::map<short, std::set<int>> list1 = dictionary.getPostingsList(buf1);
             std::map<short, std::set<int>> list2 = positionalIntersect(list1, postLists.top(), k);
             postLists.pop();
             postLists.push(list2);
@@ -542,6 +478,67 @@ std::map<short, std::set<int>> positionalIntersect(std::map<short, std::set<int>
         }
         else {
             ++it2;
+        }
+    }
+    return result;
+}
+
+std::map<std::string, std::set<short>> postWildcardQuery(std::string word)
+{
+    word = word.substr(0, word.length() - 1);
+    int filesNumber = 0;
+    std::map<std::string, std::set<short>> simpleInvertedIndex;
+    std::map<std::string, std::set<short>> result;
+    readDictionary(simpleInvertedIndex, "invertedIndex.txt", filesNumber);
+    Btree* tree = new Btree;
+    for (auto i : simpleInvertedIndex) {
+        addWord(tree, i.first);
+    }
+    
+    std::list<std::string> words = getWords(tree, word);
+    delete tree;
+    for (auto i : words) {
+        std::map<std::string, std::set<short>>::iterator found = simpleInvertedIndex.find(i);
+        if (found != simpleInvertedIndex.end()) {
+            result.insert(*found);
+        }
+    }
+    return result;
+}
+
+std::map<std::string, std::set<short>> freeWildcardQuery(std::string word)
+{
+    std::map<std::string, std::set<short>> result;
+    std::map<std::string, std::set<short>> simpleInvertedIndex;
+    int fileNumber = 0;
+    readDictionary(simpleInvertedIndex, "invertedIndex.txt", fileNumber);
+
+    word += '$';
+    Btree* tree = new Btree;
+    permutermIndex(tree, simpleInvertedIndex);
+    while (word.at(word.length() - 1) != '*') {
+        word += word.at(0);
+        word = word.substr(1, word.length());
+    }
+    word = word.substr(0, word.length()-1);  //delete "*" in the end
+    std::list<std::string> words = getWords(tree, word);
+    delete tree;
+
+    std::list<std::string>::iterator element = words.begin();
+    for (auto i : words) {
+        while (i.at(i.length()-1) != '$') {
+            i += i.at(0);
+            i = i.substr(1, word.length()+1);
+        }
+        i = i.substr(0, word.length());
+        *element = i;
+        ++element;
+    }
+
+    for (auto i : words) {
+        std::map<std::string, std::set<short>>::iterator found = simpleInvertedIndex.find(i);
+        if (found != simpleInvertedIndex.end()) {
+            result.insert(*found);
         }
     }
     return result;
