@@ -50,10 +50,15 @@ int main()
         std::cout << i << std::endl;
     }*/
 
-    std::map<std::string, std::set<short>> query = postWildcardQuery("superstitio*");
+    std::map<std::string, std::set<short>> query = freeWildcardQuery3Gramm("comp*ter");
 
     for (auto i : query) {
-        std::cout<< i.first << std::endl;
+        std::cout<< i.first << " in docs: ";
+
+        for (auto j : i.second) {
+            std::cout << j << " ";
+        }
+        std::cout << std::endl;
     }
 
     return 0;

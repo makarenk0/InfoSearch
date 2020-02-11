@@ -2,6 +2,7 @@
 
 
 
+
 std::vector<std::string> filesInDir(const std::string& directoryPath) 
 {
     WIN32_FIND_DATA FindFileData = {0};
@@ -79,7 +80,7 @@ void biwordIndex(const std::string& directoryPath)
                         firstWord = false;
                     }
                     else {
-                        addWordToDictionary(dictionary, previousWord + " " + word, i);
+                        addWordToDictionary<short>(dictionary, previousWord + " " + word, i);
                     }
                     previousWord = word;
                     word = "";
@@ -127,7 +128,7 @@ void positionalIndex(const std::string& directoryPath)
     dictionary.printInFile("positionalIndex", fileNumber);
 }
 
-void permutermIndex(Btree* tree, std::map<std::string, std::set<short>>& invertedIndex)
+void permutermIndex(Btree* tree, const std::map<std::string, std::set<short>>& invertedIndex)
 {
     for (auto i : invertedIndex) { //iteration through map keys
         std::string key = i.first;
@@ -141,12 +142,23 @@ void permutermIndex(Btree* tree, std::map<std::string, std::set<short>>& inverte
     }
 }
 
-void addWordToDictionary(std::map<std::string, std::set<short>>& dictionary, const std::string& word, short& bookNumber) {
-    std::set<short> arr;
-    arr.insert(bookNumber);
-    std::pair<std::map<std::string, std::set<short>>::iterator, bool> found = dictionary.insert({ word, arr });
+void threeGramIndexGen(std::map<std::string, std::set<std::string>>& index, const std::map<std::string, std::set<short>>& invertedIndex)
+{
+    for (auto i : invertedIndex) {
+        std::string word = '$'+i.first+'$';
+        std::string buf = i.first;
+        for (int j = 0; j < word.length()-2; j++) {
+            addWordToDictionary(index, word.substr(j, 3), buf);
+        }
+    }
+}
+
+template<class T> void addWordToDictionary(std::map<std::string, std::set<T>>& dictionary, const std::string& word, T& value) {
+    std::set<T> arr;
+    arr.insert(value);
+    std::pair<std::map<std::string, std::set<T>>::iterator, bool> found = dictionary.insert({ word, arr });
     if (!found.second) {
-        found.first->second.insert(bookNumber);
+        found.first->second.insert(value);
     }
 }
 
@@ -215,16 +227,16 @@ void saveReadWord(const std::string& line, std::string& value) {
     value = line.substr(0, line.find(" "));
 }
 
-std::set<short> booleanSearch(std::string request, std::map<std::string, std::set<short>>& dictionary, const int& docNumber, const bool& biword)
+template<class T> std::set<T> booleanSearch(std::string request, std::map<std::string, std::set<T>>& dictionary, const int& docNumber, const bool& biword)
 {
     std::string wordBuf = "";
 
-    std::set<short> word1List;  //buffers
-    std::set<short> word2List;
-    std::set<short> result;
+    std::set<T> word1List;  //buffers
+    std::set<T> word2List;
+    std::set<T> result;
     
     std::stack<binOperations> operations;
-    std::stack<std::set<short>> lists;
+    std::stack<std::set<T>> lists;
 
     int bracketCounter = 1;
     int currentSize = 0;
@@ -353,9 +365,9 @@ void sortBinOperations(std::stack<std::set<short>>& lists, std::stack<binOperati
     
 }
 
-void andSearch(const std::set<short>& list1, const std::set<short>& list2, std::set<short>& result) {
-    std::set<short>::iterator it1 = list1.begin();
-    std::set<short>::iterator it2 = list2.begin();
+template<class T> void andSearch(const std::set<T>& list1, const std::set<T>& list2, std::set<T>& result) {
+    std::set<T>::iterator it1 = list1.begin();
+    std::set<T>::iterator it2 = list2.begin();
     while (it1 != list1.end() && it2 != list2.end()) {
         if (*it1 == *it2) {
             result.insert(*it1);
@@ -371,9 +383,9 @@ void andSearch(const std::set<short>& list1, const std::set<short>& list2, std::
     }
 }
 
-void orSearch(const std::set<short>& list1, const std::set<short>& list2, std::set<short>& result) {
-    std::set<short>::iterator it1 = list1.begin();
-    std::set<short>::iterator it2 = list2.begin();
+template<class T> void orSearch(const std::set<T>& list1, const std::set<T>& list2, std::set<T>& result) {
+    std::set<T>::iterator it1 = list1.begin();
+    std::set<T>::iterator it2 = list2.begin();
     while (it1 != list1.end()) {
             result.insert(*it1);
             ++it1;
@@ -394,6 +406,10 @@ void notSearch(const std::set<short>& list1, const int& docNumber, std::set<shor
             ++it1;
         }
     }
+}
+
+void notSearch(const std::set<std::string>& list1, const int& docNumber, std::set<std::string>& result) {
+
 }
 
 std::map<short, std::set<int>> positionalIntersect(std::map<short, std::set<int>>& list1, std::map<short, std::set<int>>& list2, const int& k)
@@ -506,7 +522,7 @@ std::map<std::string, std::set<short>> postWildcardQuery(std::string word)
     return result;
 }
 
-std::map<std::string, std::set<short>> freeWildcardQuery(std::string word)
+std::map<std::string, std::set<short>> freeWildcardQueryPermuterm(std::string word)
 {
     std::map<std::string, std::set<short>> result;
     std::map<std::string, std::set<short>> simpleInvertedIndex;
@@ -539,6 +555,43 @@ std::map<std::string, std::set<short>> freeWildcardQuery(std::string word)
         std::map<std::string, std::set<short>>::iterator found = simpleInvertedIndex.find(i);
         if (found != simpleInvertedIndex.end()) {
             result.insert(*found);
+        }
+    }
+    return result;
+}
+
+std::map<std::string, std::set<short>> freeWildcardQuery3Gramm(std::string word)
+{
+    std::map<std::string, std::set<short>> result;
+    std::map<std::string, std::set<short>> simpleInvertedIndex;
+    std::map<std::string, std::set<std::string>> threeGramIndex;
+    int fileNumber = 0;
+    readDictionary(simpleInvertedIndex, "invertedIndex.txt", fileNumber);
+    threeGramIndexGen(threeGramIndex, simpleInvertedIndex);
+    std::string request = "( ";
+
+    std::string firstPart = '$' + word.substr(0, word.find('*'));
+    std::string secondPart = word.substr(word.find('*')+1, word.length()) + '$';
+
+    for (int i = 0; i < 1.0*firstPart.length() - 2; i++) {
+        request += firstPart.substr(i, 3);
+        request += " AND ";
+    }
+    for (int i = 0; i < 1.0*secondPart.length() - 2; i++) {
+        request += secondPart.substr(i, 3);
+        request += " AND ";
+    }
+    if (request.length() > 3) {
+        request = request.substr(0, request.length() - 4);
+        request += ')';
+
+        std::set<std::string> words;
+        words = booleanSearch(request, threeGramIndex, fileNumber);
+
+        for (auto i : words) {
+            if (i.length() == word.length()) {   //postfiltration
+                result.insert(*simpleInvertedIndex.find(i));
+            }
         }
     }
     return result;
