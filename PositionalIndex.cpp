@@ -31,7 +31,7 @@ void PositionalIndex::addNewWord(const std::string& word, const int& frequency, 
     std::map<short, std::set<int>> lists;
     lists.insert({ bookNumber, arr });
     frequency_postLists buf(1, lists);
-    std::pair<dataStruct::iterator, bool> foundWord = data.insert({ word, buf });
+    std::pair<DataStruct::iterator, bool> foundWord = data.insert({ word, buf });
     if (!foundWord.second) {
         foundWord.first->second.first += 1;
         std::pair<std::map<short, std::set<int>>::iterator, bool> foundInDoc = foundWord.first->second.second.insert({ bookNumber , arr });
@@ -65,7 +65,7 @@ void PositionalIndex::incrementFrequency() {
 void PositionalIndex::printInFile(const std::string& fileName, const int& filesNumber)
 {
     std::ofstream out;
-    out.open("Dictionaries\\" + fileName + ".txt");
+    out.open("Index\\" + fileName + ".txt");
     out << filesNumber << std::endl;
     for (auto i : data) {
         out << i.first << " " << i.second.first << " ; ";
@@ -85,7 +85,7 @@ void PositionalIndex::printInFile(const std::string& fileName, const int& filesN
 void PositionalIndex::readFromFile(const std::string& fileName)
 {
     std::string lineBuf;
-    std::ifstream file("Dictionaries\\" + fileName);
+    std::ifstream file("Index\\" + fileName);
     getline(file, lineBuf);
     fileNumber = std::stoi(lineBuf);
     while (true) {
@@ -107,6 +107,11 @@ void PositionalIndex::readFromFile(const std::string& fileName)
         }
     }
     file.close();
+}
+
+bool PositionalIndex::empty()
+{
+    return data.empty() ? true : false;
 }
 
 void  PositionalIndex::readWord(std::string& line, std::string& value) {

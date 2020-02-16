@@ -8,9 +8,9 @@ class PositionalIndex
 {
 private:
 	typedef std::pair<int, std::map<short, std::set<int>>> frequency_postLists;
-	typedef std::map<std::string, frequency_postLists> dataStruct;
-	dataStruct data;
-	dataStruct::iterator lastInsertedElement;
+	typedef std::map<std::string, frequency_postLists> DataStruct;
+	DataStruct data;
+	DataStruct::iterator lastInsertedElement;
 	std::map<short, std::set<int>>::iterator lastInsertedPosting;
 	int fileNumber = 0;
 	void readWord(std::string& line, std::string& value);
@@ -25,6 +25,7 @@ public:
 	void incrementFrequency();
 	void printInFile(const std::string& fileName, const int& filesNumber);
 	void readFromFile(const std::string& fileName);
+	bool empty();
 	std::map<short, std::set<int>>& getPostingsList(const std::string& word);
 };
 
