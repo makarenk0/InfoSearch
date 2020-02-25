@@ -9,7 +9,8 @@ void Index::enumerateFilesInDir(const std::string& directoryPath)
     std::wstring stemp = std::wstring(directoryPath.begin(), directoryPath.end());
     stemp += L"*.txt";
     LPCWSTR path = stemp.c_str();
-   
+
+    number_filename.clear();
     hFind = FindFirstFile(path, &FindFileData);
     if (hFind == INVALID_HANDLE_VALUE) {
         throw "Folder 'Books' is empty";
@@ -22,6 +23,16 @@ void Index::enumerateFilesInDir(const std::string& directoryPath)
         std::wstring ws(FindFileData.cFileName);
         number_filename.insert({ i, std::string(ws.begin(), ws.end()) });
     }
+}
+
+void Index::saveNumberOfFiles(const std::string& directoryPath)
+{
+    std::ofstream file;
+    file.open(directoryPath + "number_filename.txt");
+    for (auto i : number_filename) {
+        file << i.first << " - " << i.second << std::endl;
+    }
+    file.close();
 }
 
 Index::Index(const std::string& directoryPath)
@@ -49,7 +60,7 @@ void Index::generateInvertedIndex(const std::string& directoryPath) {
         }
         file.close();
     }
-    printInFile(invertedIndex, number_filename.size(), "invertedIndex");
+    printInFile(invertedIndex, "invertedIndex");
 }
 
 void Index::generateBiwordIndex(const std::string& directoryPath)
@@ -80,7 +91,7 @@ void Index::generateBiwordIndex(const std::string& directoryPath)
         }
         file.close();
     }
-    printInFile(biwordIndex, number_filename.size(), "biwordIndex");
+    printInFile(biwordIndex, "biwordIndex");
 }
 
 void Index::generatePositionalIndex(const std::string& directoryPath)
@@ -143,7 +154,7 @@ template<class T> void Index::addWordToDictionary(std::map<std::string, std::set
     }
 }
 
-void Index::printInFile(std::map<std::string, std::set<short>>& dictionary, const int& allFilesNumber, const std::string& indexName) {
+void Index::printInFile(std::map<std::string, std::set<short>>& dictionary, const std::string& indexName) {
     std::ofstream out;
     out.open("Index\\"+ indexName +".txt");
     for (auto i : dictionary) {

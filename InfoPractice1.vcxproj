@@ -138,11 +138,13 @@
     <ClCompile Include="Index.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PositionalIndex.cpp" />
+    <ClCompile Include="SPIMI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Btree.h" />
     <ClInclude Include="Index.h" />
     <ClInclude Include="PositionalIndex.h" />
+    <ClInclude Include="SPIMI.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,11 +1,12 @@
-#include "Index.h"
+
+#include "SPIMI.h"
 #include <ctime>
 
 
 int main()
 {
-    const std::string directoryPath = "Books\\";
-    Index index(directoryPath);
+    const std::string directoryPath = "Col\\";
+    //Index index(directoryPath);
 
 
     //inverted index generate
@@ -83,6 +84,46 @@ int main()
         }
         std::cout << std::endl;
     }*/
+
+
+    SPIMI test(directoryPath);
+    //test.generateInvertedIndexBySPIMI(directoryPath);
+
+    test.mergeFiles("Index\\SPIMI\\");
+
+
+
+    //MEMORYSTATUSEX statex;
+
+    //statex.dwLength = sizeof(statex);
+
+    //GlobalMemoryStatusEx(&statex);
+    //std::cout << statex.ullAvailPhys<<std::endl;
+
+    //std::string d = "fsdafgsdgfsdgsdgsdgsdgsd";
+
+    //GlobalMemoryStatusEx(&statex);
+    //std::cout << statex.ullAvailPhys<<std::endl;
+    //_tprintf(TEXT("There is  %*ld percent of memory in use.\n"),
+    //    WIDTH, statex.dwMemoryLoad);
+    //_tprintf(TEXT("There are %*I64d total KB of physical memory.\n"),
+    //    WIDTH, statex.ullTotalPhys / DIV);
+    //_tprintf(TEXT("There are %*I64d free  KB of physical memory.\n"),
+    //    WIDTH, statex.ullAvailPhys / DIV);
+    //_tprintf(TEXT("There are %*I64d total KB of paging file.\n"),
+    //    WIDTH, statex.ullTotalPageFile / DIV);
+    //_tprintf(TEXT("There are %*I64d free  KB of paging file.\n"),
+    //    WIDTH, statex.ullAvailPageFile / DIV);
+    //_tprintf(TEXT("There are %*I64d total KB of virtual memory.\n"),
+    //    WIDTH, statex.ullTotalVirtual / DIV);
+    //_tprintf(TEXT("There are %*I64d free  KB of virtual memory.\n"),
+    //    WIDTH, statex.ullAvailVirtual / DIV);
+
+    //// Show the amount of extended memory available.
+
+    //_tprintf(TEXT("There are %*I64d free  KB of extended memory.\n"),
+    //    WIDTH, statex.ullAvailExtendedVirtual / DIV);
+
 
     return 0;
 }

@@ -14,6 +14,24 @@
 
 
 class Index {
+protected:
+
+	void enumerateFilesInDir(const std::string& directoryPath);
+
+	void readWord(std::string& line, std::string& value);
+
+	void saveReadWord(const std::string& line, std::string& value);
+
+	std::map<std::string, std::set<short>>::iterator insertMapKey(std::string& lineBuf, std::map<std::string, std::set<short>>& result);
+
+	void saveNumberOfFiles(const std::string& directoryPath);
+
+	std::map<short, std::string> number_filename;
+
+	template<class T> void addWordToDictionary(std::map<std::string, std::set<T>>& index, const std::string& word, const T& value);
+
+	void printInFile(std::map<std::string, std::set<short>>& index, const std::string& indexName);
+
 private:
 	std::map<std::string, std::set<short>> invertedIndex;
 	std::map<std::string, std::set<short>> biwordIndex;
@@ -21,21 +39,7 @@ private:
 	PositionalIndex positionalIndex;
 	Btree* permutermIndex = new Btree;
 
-	std::map<short, std::string> number_filename;
-
-	void enumerateFilesInDir(const std::string& directoryPath);
-
-	template<class T> void addWordToDictionary(std::map<std::string, std::set<T>>& index, const std::string& word, const T& value);
-
-	void printInFile(std::map<std::string, std::set<short>>& index, const int& allFilesNumber, const std::string& indexName);
-
 	void readFromFile(const std::string& fileName, std::map<std::string, std::set<short>>& index);
-
-	std::map<std::string, std::set<short>>::iterator insertMapKey(std::string& lineBuf, std::map<std::string, std::set<short>>& result);
-
-	void readWord(std::string& line, std::string& value);
-
-	void saveReadWord(const std::string& line, std::string& value);
 
 	std::vector<std::string> separateString(std::string line);
 
