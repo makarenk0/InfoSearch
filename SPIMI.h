@@ -8,7 +8,7 @@ class SPIMI : Index
 private:
 	std::unordered_map<std::string, std::set<int>> dataBuf;
 
-	void addWordToDictionary(std::unordered_map<std::string, std::set<int>>& index, const std::string& word, const int& value, double& memoryCounter);
+	void addWordToDictionary(const std::string& word, const int& value, double& memoryCounter);
 
 	std::pair<std::string, std::set<int>> getLineFromFile(std::ifstream& stream);
 

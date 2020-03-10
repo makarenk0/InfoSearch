@@ -1,13 +1,11 @@
 #include "SPIMI.h"
+#include <ctime>
 
-void SPIMI::addWordToDictionary(std::unordered_map<std::string, std::set<int>>& index, const std::string& word, const int& value, double& memoryCounter)
+void SPIMI::addWordToDictionary(const std::string& word, const int& value, double& memoryCounter)
 {
-    std::set<int> arr;
-    arr.insert(value);
-    std::pair<std::unordered_map<std::string, std::set<int>>::iterator, bool> found = index.insert({ word, arr });
+    std::pair<std::unordered_map<std::string, std::set<int>>::iterator, bool> found = dataBuf.insert({ word,  {value} });
     if (!found.second) {
-        std::pair<std::set<int>::iterator, bool> added = found.first->second.insert(value);
-        if (added.second) {
+        if (found.first->second.insert(value).second) {
             memoryCounter += sizeof(int);
         }
     }
@@ -97,26 +95,39 @@ void SPIMI::generateInvertedIndexBySPIMI(const std::string& directoryPath)
    
     int j = 0;
     std::ifstream file;
+    auto begin = clock();
+    char buf;
+    double wTimer = 0;
     for (auto i : number_filename) {
         ++j;
         if (j % 500 == 0) {  //every 500 files cout statistics
+            auto end = clock();
+            double elapsedMs = double(end * 1.0 - begin) * 1000.0 / CLOCKS_PER_SEC;
             GlobalMemoryStatusEx(&statex);
-            std::cout << "Free RAM: " << (double)statex.ullAvailPhys / 1000000000 << std::endl;
             std::cout << "dataBuf size(only data in bytes):" << memoryCounter << std::endl;
             std::cout << "dataBuf size(number of elements):" << dataBuf.size() << std::endl;
             std::cout << "Rough Ram count of dataBuf: " << roughRamMapCount() << std::endl;
+            std::cout << "Time spent:" << elapsedMs << std::endl;
+            std::cout << "Time spent on word adding:" << wTimer << std::endl;
             std::cout << "Files read:" << i.first << std::endl << std::endl;
+            wTimer = 0;
+            begin = clock();
         }
 
         file.open(directoryPath + i.second);
         std::string word = "";
-        char buf;
+       
         while (!file.eof()) {
             buf = file.get();
-            if (buf < 65 || (buf > 90 && buf < 97) || buf>122) {
-                if (word != "") {
-                    addWordToDictionary(dataBuf, word, i.first, memoryCounter);
-                    word = "";
+            if (buf < 65 || buf>122 || (buf > 90 && buf < 97)) {
+                if (!word.empty()) {
+
+                    auto wbegin = clock();
+                    addWordToDictionary(word, i.first, memoryCounter);
+                    auto wend = clock();
+                    wTimer += double(wend * 1.0 - wbegin) * 1000.0 / CLOCKS_PER_SEC;
+                    word.clear();
+
                     if (memoryCounter > availableMemory) {
                         GlobalMemoryStatusEx(&statex);
                         printSortedIndex(outputPath, fileCounter);
@@ -134,7 +145,7 @@ void SPIMI::generateInvertedIndexBySPIMI(const std::string& directoryPath)
         file.close();
     }
     printSortedIndex(outputPath, fileCounter);
-    mergeFiles("Index\\SPIMI");
+    //mergeFiles("Index\\SPIMI");
 }
 
 void SPIMI::printInFile(std::map<std::string, std::set<int>>& dictionary, const std::string& indexName) {
@@ -153,9 +164,13 @@ void SPIMI::printInFile(std::map<std::string, std::set<int>>& dictionary, const 
 
 void SPIMI::printSortedIndex(std::string& outputPath, int& fileCounter)
 {
-    std::map<std::string, std::set<int>> ordered(dataBuf.begin(), dataBuf.end());
-    dataBuf.clear();
+    std::map<std::string, std::set<int>> ordered;
+    for (auto i : dataBuf) {
+        ordered.insert({ i.first, i.second });
+        dataBuf.erase(dataBuf.begin());
+    }
     printInFile(ordered, outputPath + std::to_string(fileCounter));
+    dataBuf.clear();
 }
 
 void SPIMI::printInFileLine(std::ofstream& output, std::pair<std::string, std::set<int>>& line)
