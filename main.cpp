@@ -89,45 +89,13 @@ int main()
     SPIMI test(directoryPath);
     auto begin = clock();   //count time 
     test.generateInvertedIndexBySPIMI(directoryPath);
-   
     auto end = clock();  //end counting
     double elapsedMs = double(end * 1.0 - begin) * 1000.0 / CLOCKS_PER_SEC;
     std::cout << "Time spend in millis: " << elapsedMs << std::endl;
 
-    //test.mergeFiles("Index\\SPIMI\\");
 
 
-
-    //MEMORYSTATUSEX statex;
-
-    //statex.dwLength = sizeof(statex);
-
-    //GlobalMemoryStatusEx(&statex);
-    //std::cout << statex.ullAvailPhys<<std::endl;
-
-    //std::string d = "fsdafgsdgfsdgsdgsdgsdgsd";
-
-    //GlobalMemoryStatusEx(&statex);
-    //std::cout << statex.ullAvailPhys<<std::endl;
-    //_tprintf(TEXT("There is  %*ld percent of memory in use.\n"),
-    //    WIDTH, statex.dwMemoryLoad);
-    //_tprintf(TEXT("There are %*I64d total KB of physical memory.\n"),
-    //    WIDTH, statex.ullTotalPhys / DIV);
-    //_tprintf(TEXT("There are %*I64d free  KB of physical memory.\n"),
-    //    WIDTH, statex.ullAvailPhys / DIV);
-    //_tprintf(TEXT("There are %*I64d total KB of paging file.\n"),
-    //    WIDTH, statex.ullTotalPageFile / DIV);
-    //_tprintf(TEXT("There are %*I64d free  KB of paging file.\n"),
-    //    WIDTH, statex.ullAvailPageFile / DIV);
-    //_tprintf(TEXT("There are %*I64d total KB of virtual memory.\n"),
-    //    WIDTH, statex.ullTotalVirtual / DIV);
-    //_tprintf(TEXT("There are %*I64d free  KB of virtual memory.\n"),
-    //    WIDTH, statex.ullAvailVirtual / DIV);
-
-    //// Show the amount of extended memory available.
-
-    //_tprintf(TEXT("There are %*I64d free  KB of extended memory.\n"),
-    //    WIDTH, statex.ullAvailExtendedVirtual / DIV);
+   
 
 
     return 0;

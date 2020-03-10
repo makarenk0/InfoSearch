@@ -8,6 +8,10 @@ class SPIMI : Index
 private:
 	std::unordered_map<std::string, std::set<int>> dataBuf;
 
+	const double oneBlockMemory = 100000000; // 100 mb for clear data in RAM (the struct could take about 3 gb)
+
+	double charsNumber = 0, wordsNumber = 0;
+
 	void addWordToDictionary(const std::string& word, const int& value, double& memoryCounter);
 
 	std::pair<std::string, std::set<int>> getLineFromFile(std::ifstream& stream);
@@ -18,10 +22,10 @@ private:
 
 	void printInFileLine(std::ofstream& output, std::pair<std::string, std::set<int>>& line);
 
-	double roughRamMapCount();
+	void mergeFiles(const std::string& directoryPath);
 public:
 	SPIMI(const std::string& directoryPath);
 	void generateInvertedIndexBySPIMI(const std::string& directoryPath);
-	void mergeFiles(const std::string& directoryPath);
+	
 };
 

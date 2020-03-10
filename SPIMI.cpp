@@ -10,6 +10,9 @@ void SPIMI::addWordToDictionary(const std::string& word, const int& value, doubl
         }
     }
     else {
+        charsNumber += word.length();
+        ++wordsNumber;
+
         memoryCounter += word.length() + sizeof(int);
     }
 }
@@ -36,15 +39,15 @@ void SPIMI::mergeFiles(const std::string& directoryPath)
 {
     enumerateFilesInDir(directoryPath);
     std::vector<std::ifstream> readingStreams;
+
     std::ofstream output("Index\\SPIMI\\InvertedIndexMerged.txt");
+    output << charsNumber << " " << wordsNumber << std::endl;
+
     for (auto i : number_filename) {
         readingStreams.push_back(std::ifstream(directoryPath + "\\" + i.second));
     }
     size_t nfiles = number_filename.size();
     std::pair<std::string, std::set<int>>* topFileLines = new std::pair<std::string, std::set<int>>[nfiles];
-
-
-    
 
     while (true) {
         int minimal = 0;
@@ -86,33 +89,41 @@ void SPIMI::generateInvertedIndexBySPIMI(const std::string& directoryPath)
     MEMORYSTATUSEX statex;
     statex.dwLength = sizeof(statex);
     GlobalMemoryStatusEx(&statex);
-    double availableMemory = 100000000;// 100 mb for clear data in RAM (the struct could take about 3 gb)
-    std::cout<< "Start free ram" << statex.ullAvailPhys<<std::endl;
-    std::cout<< "Allowed to use ram: " << availableMemory /1000000000 << std::endl;
-    double memoryCounter = 0;
-    int fileCounter = 0;
-    std::string outputPath = "SPIMI\\invertedIndex";
+    
+    double freeRam = statex.ullAvailPhys;
+    std::cout<< "Free machine ram (gigabytes): " << freeRam <<std::endl;
+    std::cout<< "Allowed to use ram for one block: " << oneBlockMemory /1000000000 << " gigabytes" << std::endl;
    
-    int j = 0;
+    
+  
     std::ifstream file;
+    std::string outputPath = "SPIMI\\invertedIndex";
+    int j = 0;
     auto begin = clock();
+    auto end = clock();
     char buf;
     double wTimer = 0;
+    double memoryCounter = 0;
+    int blockCounter = 0;
+
+
     for (auto i : number_filename) {
         ++j;
-        if (j % 500 == 0) {  //every 500 files cout statistics
-            auto end = clock();
+
+        //-------------------------statistic--------------------------------
+        if (j % 500 == 0) {  //every 500 files print statistics
+            end = clock();
             double elapsedMs = double(end * 1.0 - begin) * 1000.0 / CLOCKS_PER_SEC;
             GlobalMemoryStatusEx(&statex);
             std::cout << "dataBuf size(only data in bytes):" << memoryCounter << std::endl;
             std::cout << "dataBuf size(number of elements):" << dataBuf.size() << std::endl;
-            std::cout << "Rough Ram count of dataBuf: " << roughRamMapCount() << std::endl;
             std::cout << "Time spent:" << elapsedMs << std::endl;
-            std::cout << "Time spent on word adding:" << wTimer << std::endl;
+            std::cout << "Time spent on word adding in hash table:" << wTimer << std::endl;
             std::cout << "Files read:" << i.first << std::endl << std::endl;
             wTimer = 0;
             begin = clock();
         }
+        //--------------------------------------------------------------------
 
         file.open(directoryPath + i.second);
         std::string word = "";
@@ -123,17 +134,17 @@ void SPIMI::generateInvertedIndexBySPIMI(const std::string& directoryPath)
                 if (!word.empty()) {
 
                     auto wbegin = clock();
-                    addWordToDictionary(word, i.first, memoryCounter);
+                    addWordToDictionary(word, i.first, memoryCounter);    //---------------Adding word in structure
                     auto wend = clock();
                     wTimer += double(wend * 1.0 - wbegin) * 1000.0 / CLOCKS_PER_SEC;
                     word.clear();
 
-                    if (memoryCounter > availableMemory) {
+                    if (memoryCounter > oneBlockMemory) {
                         GlobalMemoryStatusEx(&statex);
-                        printSortedIndex(outputPath, fileCounter);
-                        ++fileCounter;
+                        printSortedIndex(outputPath, blockCounter);
+                        ++blockCounter;
                         memoryCounter = 0;
-                        std::cout << "File created!" << std::endl;
+                        std::cout << "Block was written on hard drive!" << std::endl;
                     }
 
                 }
@@ -144,8 +155,25 @@ void SPIMI::generateInvertedIndexBySPIMI(const std::string& directoryPath)
         }
         file.close();
     }
-    printSortedIndex(outputPath, fileCounter);
-    //mergeFiles("Index\\SPIMI");
+    printSortedIndex(outputPath, blockCounter);
+
+
+    std::cout << "Merge started" << std::endl;
+    begin = clock();
+    mergeFiles("Index\\SPIMI");   //------------------------Merge blocks on hard drive
+    end = clock();
+    std::cout << "Merge ended succesfully in "<< double(end * 1.0 - begin) * 1000.0 / CLOCKS_PER_SEC<<" seconds"<< std::endl;
+}
+
+void SPIMI::printSortedIndex(std::string& outputPath, int& fileCounter)
+{
+    std::map<std::string, std::set<int>> ordered;
+    for (auto i : dataBuf) {
+        ordered.insert({ i.first, i.second });
+        dataBuf.erase(dataBuf.begin());
+    }
+    printInFile(ordered, outputPath + std::to_string(fileCounter));
+    dataBuf.clear();
 }
 
 void SPIMI::printInFile(std::map<std::string, std::set<int>>& dictionary, const std::string& indexName) {
@@ -162,17 +190,6 @@ void SPIMI::printInFile(std::map<std::string, std::set<int>>& dictionary, const 
     out.close();
 }
 
-void SPIMI::printSortedIndex(std::string& outputPath, int& fileCounter)
-{
-    std::map<std::string, std::set<int>> ordered;
-    for (auto i : dataBuf) {
-        ordered.insert({ i.first, i.second });
-        dataBuf.erase(dataBuf.begin());
-    }
-    printInFile(ordered, outputPath + std::to_string(fileCounter));
-    dataBuf.clear();
-}
-
 void SPIMI::printInFileLine(std::ofstream& output, std::pair<std::string, std::set<int>>& line)
 {
     output << line.first << " ";
@@ -180,16 +197,4 @@ void SPIMI::printInFileLine(std::ofstream& output, std::pair<std::string, std::s
         output << " " << i;
     }
     output << std::endl;
-}
-
-double SPIMI::roughRamMapCount()
-{
-    size_t n = dataBuf.bucket_count();
-    float m = dataBuf.max_load_factor();
-    if (m > 1.0) {
-        return n * 1.0 * m;
-    }
-    else {
-        return n;
-    }
 }
