@@ -1,0 +1,109 @@
+Free machine ram (gigabytes): 3.46625e+09
+Allowed to use ram for one block: 0.1 gigabytes
+dataBuf size(only data in bytes):1.55054e+07
+dataBuf size(number of elements):335270
+Time spent:25437
+Time spent on word adding in hash table:15769
+Files read:499
+
+dataBuf size(only data in bytes):3.20615e+07
+dataBuf size(number of elements):515292
+Time spent:34863
+Time spent on word adding in hash table:23289
+Files read:999
+
+dataBuf size(only data in bytes):4.70412e+07
+dataBuf size(number of elements):666066
+Time spent:29280
+Time spent on word adding in hash table:20096
+Files read:1499
+
+dataBuf size(only data in bytes):5.88133e+07
+dataBuf size(number of elements):734391
+Time spent:22618
+Time spent on word adding in hash table:14999
+Files read:1999
+
+dataBuf size(only data in bytes):7.36043e+07
+dataBuf size(number of elements):821688
+Time spent:33287
+Time spent on word adding in hash table:23964
+Files read:2499
+
+dataBuf size(only data in bytes):9.34951e+07
+dataBuf size(number of elements):1021054
+Time spent:40775
+Time spent on word adding in hash table:29357
+Files read:2999
+
+Block was written on hard drive!
+dataBuf size(only data in bytes):8.6379e+06
+dataBuf size(number of elements):224463
+Time spent:52390
+Time spent on word adding in hash table:16955
+Files read:3499
+
+dataBuf size(only data in bytes):2.26117e+07
+dataBuf size(number of elements):402656
+Time spent:23725
+Time spent on word adding in hash table:15216
+Files read:3999
+
+dataBuf size(only data in bytes):3.64553e+07
+dataBuf size(number of elements):537902
+Time spent:27717
+Time spent on word adding in hash table:16549
+Files read:4499
+
+dataBuf size(only data in bytes):4.96175e+07
+dataBuf size(number of elements):645946
+Time spent:26496
+Time spent on word adding in hash table:17066
+Files read:4999
+
+dataBuf size(only data in bytes):6.41831e+07
+dataBuf size(number of elements):779303
+Time spent:30108
+Time spent on word adding in hash table:19056
+Files read:5499
+
+dataBuf size(only data in bytes):7.6853e+07
+dataBuf size(number of elements):872108
+Time spent:28757
+Time spent on word adding in hash table:17642
+Files read:5999
+
+dataBuf size(only data in bytes):9.02757e+07
+dataBuf size(number of elements):968770
+Time spent:31372
+Time spent on word adding in hash table:19987
+Files read:6499
+
+Block was written on hard drive!
+dataBuf size(only data in bytes):3.68315e+06
+dataBuf size(number of elements):119709
+Time spent:53206
+Time spent on word adding in hash table:15848
+Files read:6999
+
+dataBuf size(only data in bytes):1.78343e+07
+dataBuf size(number of elements):384107
+Time spent:22554
+Time spent on word adding in hash table:13057
+Files read:7499
+
+dataBuf size(only data in bytes):3.04625e+07
+dataBuf size(number of elements):523723
+Time spent:24159
+Time spent on word adding in hash table:14192
+Files read:7999
+
+dataBuf size(only data in bytes):4.41175e+07
+dataBuf size(number of elements):655429
+Time spent:28777
+Time spent on word adding in hash table:17168
+Files read:8499
+
+Merge started
+Merge ended succesfully in 48820 seconds
+Time spend in millis: 599909
