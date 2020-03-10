@@ -23,9 +23,10 @@ Provides different methods of files indexing
  Example: ```"com*uter"```<br><br>
 * free wildcard queries on threegram index(also BTree)<br>
  Example: ```"com*uter"```<br><br>
-
+## Big data algorithms
+* SPIMI algorithm<br><br>
 ## Compression:<br>
-* SPIMI algorithm<br>
+* -
 
 Tests:<br>
 Gutenberg collection<br>
