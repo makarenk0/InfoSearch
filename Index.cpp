@@ -40,6 +40,10 @@ Index::Index(const std::string& directoryPath)
     enumerateFilesInDir(directoryPath);
 }
 
+Index::Index()
+{
+}
+
 void Index::generateInvertedIndex(const std::string& directoryPath) {
     std::ifstream file;
     for (auto i : number_filename) {

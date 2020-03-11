@@ -61,6 +61,7 @@ public:
 	enum class IndexName {inverted, biword, positional};
 
 	Index(const std::string& directoryPath);
+	Index();
 
 	void generateInvertedIndex(const std::string& directoryPath);
 	void generateBiwordIndex(const std::string& directoryPath);

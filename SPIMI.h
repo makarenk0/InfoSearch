@@ -1,4 +1,5 @@
 #pragma once
+#include "IndexCompression.h"
 #include "Index.h"
 #include <unordered_map>
 
@@ -6,7 +7,9 @@
 class SPIMI : Index
 {
 private:
-	std::unordered_map<std::string, std::set<int>> dataBuf;
+	IndexCompression _compressor;
+
+	std::unordered_map<std::string, std::set<int>> _dataBuf;
 
 	const double oneBlockMemory = 100000000; // 100 mb for clear data in RAM (the struct could take about 3 gb)
 
@@ -20,12 +23,15 @@ private:
 
 	void printSortedIndex(std::string& outputPath, int& fileCounter);
 
-	void printInFileLine(std::ofstream& output, std::pair<std::string, std::set<int>>& line);
+	void printPostingList(std::ofstream& output, const std::set<int>& postingList);
 
-	void mergeFiles(const std::string& directoryPath);
+	void printWordInDictionary(std::ofstream& output, const std::string& word);
+
+	
 public:
 	SPIMI(const std::string& directoryPath);
 	void generateInvertedIndexBySPIMI(const std::string& directoryPath);
+	void mergeFiles(const std::string& directoryPath);
 	
 };
 

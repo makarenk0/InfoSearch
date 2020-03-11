@@ -3,7 +3,7 @@
 
 void SPIMI::addWordToDictionary(const std::string& word, const int& value, double& memoryCounter)
 {
-    std::pair<std::unordered_map<std::string, std::set<int>>::iterator, bool> found = dataBuf.insert({ word,  {value} });
+    std::pair<std::unordered_map<std::string, std::set<int>>::iterator, bool> found = _dataBuf.insert({ word,  {value} });
     if (!found.second) {
         if (found.first->second.insert(value).second) {
             memoryCounter += sizeof(int);
@@ -40,8 +40,9 @@ void SPIMI::mergeFiles(const std::string& directoryPath)
     enumerateFilesInDir(directoryPath);
     std::vector<std::ifstream> readingStreams;
 
-    std::ofstream output("Index\\SPIMI\\InvertedIndexMerged.txt");
-    output << charsNumber << " " << wordsNumber << std::endl;
+    std::ofstream dictionaryOut("Index\\SPIMI\\Compressed\\InvertedIndexMergedDictionary.txt");
+    std::ofstream postingsOut("Index\\SPIMI\\Compressed\\InvertedIndexMergedPostings.txt", std::ios::binary);
+   
 
     for (auto i : number_filename) {
         readingStreams.push_back(std::ifstream(directoryPath + "\\" + i.second));
@@ -69,14 +70,18 @@ void SPIMI::mergeFiles(const std::string& directoryPath)
                 topFileLines[i].first.clear();
             }
         }
-        printInFileLine(output, topFileLines[minimal]);
+       // printWordInDictionary(dictionaryOut, topFileLines[minimal].first);
+        printPostingList(postingsOut, topFileLines[minimal].second);
+
+
         topFileLines[minimal].first.clear();
     }
     delete[] topFileLines;
     for (int i = 0; i < nfiles; i++) {
         readingStreams[i].close();
     }
-    output.close();
+    dictionaryOut.close();
+    postingsOut.close();
 }
 
 SPIMI::SPIMI(const std::string& directoryPath) : Index(directoryPath)
@@ -116,7 +121,7 @@ void SPIMI::generateInvertedIndexBySPIMI(const std::string& directoryPath)
             double elapsedMs = double(end * 1.0 - begin) * 1000.0 / CLOCKS_PER_SEC;
             GlobalMemoryStatusEx(&statex);
             std::cout << "dataBuf size(only data in bytes):" << memoryCounter << std::endl;
-            std::cout << "dataBuf size(number of elements):" << dataBuf.size() << std::endl;
+            std::cout << "dataBuf size(number of elements):" << _dataBuf.size() << std::endl;
             std::cout << "Time spent:" << elapsedMs << std::endl;
             std::cout << "Time spent on word adding in hash table:" << wTimer << std::endl;
             std::cout << "Files read:" << i.first << std::endl << std::endl;
@@ -160,7 +165,7 @@ void SPIMI::generateInvertedIndexBySPIMI(const std::string& directoryPath)
 
     std::cout << "Merge started" << std::endl;
     begin = clock();
-    mergeFiles("Index\\SPIMI");   //------------------------Merge blocks on hard drive
+    mergeFiles("Index\\SPIMI\\");   //------------------------Merge blocks on hard drive
     end = clock();
     std::cout << "Merge ended succesfully in "<< double(end * 1.0 - begin) * 1000.0 / CLOCKS_PER_SEC<<" seconds"<< std::endl;
 }
@@ -168,12 +173,12 @@ void SPIMI::generateInvertedIndexBySPIMI(const std::string& directoryPath)
 void SPIMI::printSortedIndex(std::string& outputPath, int& fileCounter)
 {
     std::map<std::string, std::set<int>> ordered;
-    for (auto i : dataBuf) {
+    for (auto i : _dataBuf) {
         ordered.insert({ i.first, i.second });
-        dataBuf.erase(dataBuf.begin());
+        _dataBuf.erase(_dataBuf.begin());
     }
     printInFile(ordered, outputPath + std::to_string(fileCounter));
-    dataBuf.clear();
+    _dataBuf.clear();
 }
 
 void SPIMI::printInFile(std::map<std::string, std::set<int>>& dictionary, const std::string& indexName) {
@@ -190,11 +195,16 @@ void SPIMI::printInFile(std::map<std::string, std::set<int>>& dictionary, const 
     out.close();
 }
 
-void SPIMI::printInFileLine(std::ofstream& output, std::pair<std::string, std::set<int>>& line)
+void SPIMI::printPostingList(std::ofstream& output, const std::set<int>& postingList)
 {
-    output << line.first << " ";
-    for (auto i : line.second) {
-        output << " " << i;
+    std::vector<char> byteLine = _compressor.getEncodedByteArray(postingList);
+    for (auto i : byteLine) {
+        output.write((char*)&i, sizeof(i));
     }
-    output << std::endl;
+    output.write((char*)0, sizeof(char));
+}
+
+void SPIMI::printWordInDictionary(std::ofstream& output, const std::string& word)
+{
+    output << word << "\n";
 }
