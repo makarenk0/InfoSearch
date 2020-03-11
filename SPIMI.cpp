@@ -38,22 +38,23 @@ std::pair<std::string, std::set<int>> SPIMI::getLineFromFile(std::ifstream& stre
 void SPIMI::mergeFiles(const std::string& directoryPath)
 {
     enumerateFilesInDir(directoryPath);
+    int nfiles = number_filename.size();
     std::vector<std::ifstream> readingStreams;
 
     std::ofstream dictionaryOut("Index\\SPIMI\\Compressed\\InvertedIndexMergedDictionary.txt");
-    std::ofstream postingsOut("Index\\SPIMI\\Compressed\\InvertedIndexMergedPostings.txt", std::ios::binary);
+    std::ofstream postingsOut("Index\\SPIMI\\Compressed\\InvertedIndexMergedPostings.bin", std::ios::binary);
    
 
     for (auto i : number_filename) {
         readingStreams.push_back(std::ifstream(directoryPath + "\\" + i.second));
     }
-    size_t nfiles = number_filename.size();
+   
     std::pair<std::string, std::set<int>>* topFileLines = new std::pair<std::string, std::set<int>>[nfiles];
 
     while (true) {
         int minimal = 0;
         for (int i = 0; i < nfiles; i++) {
-            if ((topFileLines[i].first).empty()) {
+            if (topFileLines[i].first.empty()) {
                 topFileLines[i] = getLineFromFile(readingStreams[i]);
             }
             if (topFileLines[i].first < topFileLines[minimal].first) {
@@ -66,11 +67,12 @@ void SPIMI::mergeFiles(const std::string& directoryPath)
 
         for (int i = 0; i < nfiles; i++) {
             if (i != minimal && topFileLines[i].first == topFileLines[minimal].first) {
-                topFileLines[minimal].second.insert(topFileLines[i].second.begin(), topFileLines[i].second.end());
+                std::set<int> buf(topFileLines[i].second.begin(), topFileLines[i].second.end());
+                topFileLines[minimal].second.insert(buf.begin(), buf.end());
                 topFileLines[i].first.clear();
             }
         }
-       // printWordInDictionary(dictionaryOut, topFileLines[minimal].first);
+        printWordInDictionary(dictionaryOut, topFileLines[minimal].first);
         printPostingList(postingsOut, topFileLines[minimal].second);
 
 
@@ -197,11 +199,20 @@ void SPIMI::printInFile(std::map<std::string, std::set<int>>& dictionary, const 
 
 void SPIMI::printPostingList(std::ofstream& output, const std::set<int>& postingList)
 {
-    std::vector<char> byteLine = _compressor.getEncodedByteArray(postingList);
-    for (auto i : byteLine) {
-        output.write((char*)&i, sizeof(i));
+    int buf = 0;
+    std::set<int> intervalPostList;
+    for (auto &i : postingList) {
+        intervalPostList.insert(i - buf);
+        buf = i;
     }
-    output.write((char*)0, sizeof(char));
+
+    std::vector<unsigned char> byteArr;
+    _compressor.getEncodedByteArray(byteArr, intervalPostList);
+    for (int i = 0; i < byteArr.size(); i++) {
+        output.write((char*)&byteArr[i], 1);
+    }
+    char div = 0;
+    output.write((char*)&div, 1);
 }
 
 void SPIMI::printWordInDictionary(std::ofstream& output, const std::string& word)

@@ -10,6 +10,6 @@ private:
 	
 public:
 	IndexCompression();
-	std::vector<char> getEncodedByteArray(const std::set<int>& postingsList);
+	void getEncodedByteArray(std::vector<unsigned char>& byteArr, const std::set<int>& postingsList);
 };
 

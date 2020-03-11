@@ -27,7 +27,6 @@ private:
 
 	void printWordInDictionary(std::ofstream& output, const std::string& word);
 
-	
 public:
 	SPIMI(const std::string& directoryPath);
 	void generateInvertedIndexBySPIMI(const std::string& directoryPath);

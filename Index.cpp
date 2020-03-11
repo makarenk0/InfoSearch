@@ -13,13 +13,13 @@ void Index::enumerateFilesInDir(const std::string& directoryPath)
     number_filename.clear();
     hFind = FindFirstFile(path, &FindFileData);
     if (hFind == INVALID_HANDLE_VALUE) {
-        throw "Folder 'Books' is empty";
+        throw "Folder "+ directoryPath +" is empty";
     }
     else {
         std::wstring ws(FindFileData.cFileName);  //TO DO: reduce the code
-        number_filename.insert({ 0, std::string(ws.begin(), ws.end()) });
+        number_filename.insert({ 1, std::string(ws.begin(), ws.end()) });
     }
-    for (int i = 1; FindNextFile(hFind, &FindFileData) != 0; i++) {
+    for (int i = 2; FindNextFile(hFind, &FindFileData) != 0; i++) {
         std::wstring ws(FindFileData.cFileName);
         number_filename.insert({ i, std::string(ws.begin(), ws.end()) });
     }
