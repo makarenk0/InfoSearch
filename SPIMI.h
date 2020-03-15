@@ -8,6 +8,8 @@ class SPIMI : Index
 {
 private:
 	IndexCompression _compressor;
+	const std::string compressedDictionaryPath = "Index\\SPIMI\\Compressed\\MergedDictionary.txt";
+	const std::string compressedPostingListsPath = "Index\\SPIMI\\Compressed\\MergedPostings.bin";
 
 	std::unordered_map<std::string, std::set<int>> _dataBuf;
 
@@ -27,10 +29,12 @@ private:
 
 	void printWordInDictionary(std::ofstream& output, const std::string& word);
 
+	void mergeFiles(const std::string& directoryPath);
+
 public:
 	SPIMI(const std::string& directoryPath);
 	void generateInvertedIndexBySPIMI(const std::string& directoryPath);
-	void mergeFiles(const std::string& directoryPath);
+	IndexCompression& getCompressor();
 	
 };
 

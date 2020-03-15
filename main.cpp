@@ -87,21 +87,15 @@ int main()
     }*/
 
 
-    //SPIMI test(directoryPath);
+    SPIMI test(directoryPath);
     //auto begin = clock();   //count time 
     //test.generateInvertedIndexBySPIMI(directoryPath);
     //auto end = clock();  //end counting
     //double elapsedMs = double(end * 1.0 - begin) * 1000.0 / CLOCKS_PER_SEC;
     //std::cout << "Time spend in millis: " << elapsedMs << std::endl;
-
-    SPIMI test(directoryPath);
-    auto begin = clock();   //count time 
-    test.mergeFiles("Index\\SPIMI\\");
-    auto end = clock();  //end counting
-    double elapsedMs = double(end * 1.0 - begin) * 1000.0 / CLOCKS_PER_SEC;
-    std::cout << "Time spend in millis: " << elapsedMs << std::endl;
-
-   
+    
+    IndexCompression compressor = test.getCompressor();
+       
    
     
     return 0;

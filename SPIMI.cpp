@@ -12,7 +12,6 @@ void SPIMI::addWordToDictionary(const std::string& word, const int& value, doubl
     else {
         charsNumber += word.length();
         ++wordsNumber;
-
         memoryCounter += word.length() + sizeof(int);
     }
 }
@@ -41,8 +40,8 @@ void SPIMI::mergeFiles(const std::string& directoryPath)
     int nfiles = number_filename.size();
     std::vector<std::ifstream> readingStreams;
 
-    std::ofstream dictionaryOut("Index\\SPIMI\\Compressed\\InvertedIndexMergedDictionary.txt");
-    std::ofstream postingsOut("Index\\SPIMI\\Compressed\\InvertedIndexMergedPostings.bin", std::ios::binary);
+    std::ofstream dictionaryOut(compressedDictionaryPath);
+    std::ofstream postingsOut(compressedPostingListsPath, std::ios::binary);
    
 
     for (auto i : number_filename) {
@@ -101,7 +100,6 @@ void SPIMI::generateInvertedIndexBySPIMI(const std::string& directoryPath)
     std::cout<< "Free machine ram (gigabytes): " << freeRam <<std::endl;
     std::cout<< "Allowed to use ram for one block: " << oneBlockMemory /1000000000 << " gigabytes" << std::endl;
    
-    
   
     std::ifstream file;
     std::string outputPath = "SPIMI\\invertedIndex";
@@ -172,6 +170,12 @@ void SPIMI::generateInvertedIndexBySPIMI(const std::string& directoryPath)
     std::cout << "Merge ended succesfully in "<< double(end * 1.0 - begin) * 1000.0 / CLOCKS_PER_SEC<<" seconds"<< std::endl;
 }
 
+IndexCompression& SPIMI::getCompressor()
+{
+    _compressor.generatePtrTable(compressedDictionaryPath, compressedPostingListsPath);
+    return _compressor;
+}
+
 void SPIMI::printSortedIndex(std::string& outputPath, int& fileCounter)
 {
     std::map<std::string, std::set<int>> ordered;
@@ -200,12 +204,12 @@ void SPIMI::printInFile(std::map<std::string, std::set<int>>& dictionary, const 
 void SPIMI::printPostingList(std::ofstream& output, const std::set<int>& postingList)
 {
     int buf = 0;
-    std::set<int> intervalPostList;
+    std::vector<int> intervalPostList;
+    intervalPostList.push_back(postingList.size());  //store frequency in the start of vector
     for (auto &i : postingList) {
-        intervalPostList.insert(i - buf);
+        intervalPostList.push_back(i - buf);
         buf = i;
     }
-
     std::vector<unsigned char> byteArr;
     _compressor.getEncodedByteArray(byteArr, intervalPostList);
     for (int i = 0; i < byteArr.size(); i++) {
