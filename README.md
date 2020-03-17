@@ -26,7 +26,8 @@ Provides different methods of files indexing
 ## Big data algorithms
 * SPIMI algorithm<br><br>
 ## Compression:<br>
-* -
+* dictionary in RAM compressing
+* postings lists: byte, 4-block encoding (both RAM and Hard drive) + word frequency
 
 Tests:<br>
 Gutenberg collection<br>
