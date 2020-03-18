@@ -27,7 +27,8 @@ Provides different methods of files indexing
 * SPIMI algorithm<br><br>
 ## Compression:<br>
 * -
-
+## Interface
+* WPF MVVM, .NET Core platform (C# and C++)
 Tests:<br>
 Gutenberg collection<br>
 ## Machines
