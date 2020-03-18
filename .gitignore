@@ -43,3 +43,5 @@
 *.idb
 *.ilk
 *.txt
+.vs/InfoSearch/v16/.suo
+*.v2
