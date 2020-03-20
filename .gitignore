@@ -43,3 +43,7 @@
 *.idb
 *.ilk
 *.txt
+*.v2
+.vs/InfoSearch/v16/.suo
+*.db-shm
+*.db-wal

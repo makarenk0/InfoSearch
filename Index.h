@@ -15,6 +15,26 @@
 
 class Index {
 protected:
+	struct PostingList {
+		int docId = 0;
+		mutable std::vector<int> frequencies = { 0 };
+		mutable char zoneMask = 0;
+		bool operator<(const PostingList& other) const {
+			return docId < other.docId;
+		}
+		bool operator>(const PostingList& other) const {
+			return docId > other.docId;
+		}
+		bool operator==(const PostingList& other) const {
+			if (docId == other.docId) {
+				frequencies.push_back(other.frequencies[0]);
+				zoneMask = zoneMask | other.zoneMask;
+				return true;
+			}
+			return false;
+		}
+	};
+
 
 	void enumerateFilesInDir(const std::string& directoryPath);
 
@@ -32,6 +52,64 @@ protected:
 
 	void printInFile(std::map<std::string, std::set<short>>& index, const std::string& indexName);
 
+	template<class T> std::set<T> booleanSearchGeneral(std::string request, std::map<std::string, std::set<T>>& dictionary) {
+		std::vector<std::string> requestParts = separateString(request);
+
+		if (requestParts.size() == 1) {
+			if (requestParts[0].substr(0, 3) == "NOT") return notSearch(dictionary.find(requestParts[0].substr(4, requestParts[0].length() - 3))->second);
+			else {
+				std::map<std::string, std::set<T>>::iterator found = dictionary.find(requestParts[0]);
+				if (found != dictionary.end()) return found->second;
+				return std::set<T>();
+			}
+		}
+
+		std::stack<std::set<T>> lists;
+		lists.push(booleanSearchGeneral(requestParts[0], dictionary));
+
+		for (std::vector<std::string>::iterator i = requestParts.begin() + 1; i != requestParts.end(); i++) {   // AND
+			if (*i == "AND") {
+				std::set<T> list1 = lists.top();
+				lists.pop();
+				i += 1;
+				lists.push(andSearch(list1, booleanSearchGeneral(*i, dictionary)));
+
+			}
+			else if (*i == "OR") {
+				i += 1;
+				lists.push(booleanSearchGeneral(*i, dictionary));
+			}
+		}
+		while (lists.size() != 1) {   //OR
+			std::set<T> list1 = lists.top();
+			lists.pop();
+			std::set<T> list2 = lists.top();
+			lists.pop();
+			lists.push(orSearch(list1, list2));
+		}
+		return lists.top();
+	}
+
+	template<class T> std::set<T> andSearch(const std::set<T>& list1, const std::set<T>& list2) {
+		std::set<T> result;
+		std::set<T>::iterator it1 = list1.begin();
+		std::set<T>::iterator it2 = list2.begin();
+		while (it1 != list1.end() && it2 != list2.end()) {
+			if (*it1 == *it2) {
+				result.insert(*it1);
+				++it1;
+				++it2;
+			}
+			else if (*it1 < *it2) {
+				++it1;
+			}
+			else {
+				++it2;
+			}
+		}
+		return result;
+	}
+
 private:
 	std::map<std::string, std::set<short>> invertedIndex;
 	std::map<std::string, std::set<short>> biwordIndex;
@@ -45,14 +123,24 @@ private:
 
 	std::string readInBrackets(std::string& line);
 
-	template<class T> std::set<T> booleanSearchGeneral(std::string request, std::map<std::string, std::set<T>>& dictionary);
-
-	template<class T> std::set<T> andSearch(const std::set<T>& list1, const std::set<T>& list2);
-
-	template<class T> std::set<T> orSearch(const std::set<T>& list1, const std::set<T>& list2);
+	template<class T> std::set<T> orSearch(const std::set<T>& list1, const std::set<T>& list2) {
+		std::set<T> result;
+		std::set<T>::iterator it1 = list1.begin();
+		std::set<T>::iterator it2 = list2.begin();
+		while (it1 != list1.end()) {
+			result.insert(*it1);
+			++it1;
+		}
+		while (it2 != list2.end()) {
+			result.insert(*it2);
+			++it2;
+		}
+		return result;
+	}
 
 	std::set<short> notSearch(const std::set<short>& list1);
 	std::set<std::string> notSearch(const std::set<std::string>& list1);
+	std::set<PostingList> notSearch(const std::set<PostingList>& list1);
 
 	std::map<short, std::set<int>> positionalIntersect(std::map<short, std::set<int>>& list1, std::map<short, std::set<int>>& list2, const int& k);
 	std::map<short, std::set<int>> positionalIntersect(std::map<short, std::set<int>>& list1, std::map<short, std::set<int>>& list2);

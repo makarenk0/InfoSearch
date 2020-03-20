@@ -141,6 +141,8 @@
     <ClCompile Include="PointersTable.cpp" />
     <ClCompile Include="PositionalIndex.cpp" />
     <ClCompile Include="SPIMI.cpp" />
+    <ClCompile Include="tinyxml2.cpp" />
+    <ClCompile Include="ZoneIndex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Btree.h" />
@@ -148,7 +150,10 @@
     <ClInclude Include="IndexCompression.h" />
     <ClInclude Include="PointersTable.h" />
     <ClInclude Include="PositionalIndex.h" />
+    <ClInclude Include="PostingList.h" />
     <ClInclude Include="SPIMI.h" />
+    <ClInclude Include="tinyxml2.h" />
+    <ClInclude Include="ZoneIndex.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

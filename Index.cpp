@@ -7,7 +7,7 @@ void Index::enumerateFilesInDir(const std::string& directoryPath)
     setlocale(LC_ALL, "");
 
     std::wstring stemp = std::wstring(directoryPath.begin(), directoryPath.end());
-    stemp += L"*.txt";
+    stemp += L"*.fb2";
     LPCWSTR path = stemp.c_str();
 
     number_filename.clear();
@@ -276,42 +276,6 @@ std::string Index::readInBrackets(std::string& line)
     return result;
 }
 
-
-template<class T> std::set<T> Index::booleanSearchGeneral(std::string request, std::map<std::string, std::set<T>>& dictionary)
-{
-    std::vector<std::string> requestParts = separateString(request);
-
-    if (requestParts.size() == 1) {
-        if (requestParts[0].substr(0, 3) == "NOT") return notSearch(dictionary.find(requestParts[0].substr(4, requestParts[0].length()-3))->second);
-        else return dictionary.find(requestParts[0])->second;
-    }
-    
-    std::stack<std::set<T>> lists;
-    lists.push(booleanSearchGeneral(requestParts[0], dictionary));
-
-    for (std::vector<std::string>::iterator i = requestParts.begin()+1; i!= requestParts.end(); i++) {   // AND
-        if (*i == "AND") {
-            std::set<T> list1 = lists.top();
-            lists.pop();
-            i += 1;
-            lists.push(andSearch(list1, booleanSearchGeneral(*i, dictionary)));
-            
-        }
-        else if (*i == "OR") {
-            i += 1;
-            lists.push(booleanSearchGeneral(*i, dictionary));
-        }
-    }
-    while (lists.size() != 1) {   //OR
-        std::set<T> list1 = lists.top();
-        lists.pop();
-        std::set<T> list2 = lists.top();
-        lists.pop();
-        lists.push(orSearch(list1, list2));
-    }
-    return lists.top();
-}
-
 std::set<short> Index::booleanSearch(const std::string& request)
 {
     return booleanSearchGeneral(request, invertedIndex);
@@ -369,42 +333,6 @@ std::set<short> Index::positionalSearch(std::string request)
     return result;
 }
 
-
-template<class T> std::set<T> Index::andSearch(const std::set<T>& list1, const std::set<T>& list2) {
-    std::set<T> result;
-    std::set<T>::iterator it1 = list1.begin();
-    std::set<T>::iterator it2 = list2.begin();
-    while (it1 != list1.end() && it2 != list2.end()) {
-        if (*it1 == *it2) {
-            result.insert(*it1);
-            ++it1;
-            ++it2;
-        }
-        else if (*it1 < *it2) {
-            ++it1;
-        }
-        else {
-            ++it2;
-        }
-    }
-    return result;
-}
-
-template<class T> std::set<T> Index::orSearch(const std::set<T>& list1, const std::set<T>& list2) {
-    std::set<T> result;
-    std::set<T>::iterator it1 = list1.begin();
-    std::set<T>::iterator it2 = list2.begin();
-    while (it1 != list1.end()) {
-            result.insert(*it1);
-            ++it1;
-    }
-    while (it2 != list2.end()) {
-        result.insert(*it2);
-        ++it2;
-    }
-    return result;
-}
-
 std::set<short> Index::notSearch(const std::set<short>& list1) {
     std::set<short> result;
     std::set<short>::iterator it1 = list1.begin();
@@ -419,10 +347,15 @@ std::set<short> Index::notSearch(const std::set<short>& list1) {
     return result;
 }
 
-std::set<std::string> Index::notSearch(const std::set<std::string>& list1) 
-{
+std::set<std::string> Index::notSearch(const std::set<std::string>& list1) {
     return std::set<std::string>();
 }
+
+std::set<Index::PostingList> Index::notSearch(const std::set<PostingList>& list1) {
+    return std::set<PostingList>();
+}
+
+
 
 std::map<short, std::set<int>> Index::positionalIntersect(std::map<short, std::set<int>>& list1, std::map<short, std::set<int>>& list2, const int& k)
 {
