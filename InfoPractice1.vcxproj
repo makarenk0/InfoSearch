@@ -135,6 +135,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Btree.cpp" />
+    <ClCompile Include="ClusterBuilder.cpp" />
+    <ClCompile Include="DocVectorBuilder.cpp" />
     <ClCompile Include="Index.cpp" />
     <ClCompile Include="IndexCompression.cpp" />
     <ClCompile Include="main.cpp" />
@@ -146,6 +148,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Btree.h" />
+    <ClInclude Include="ClusterBuilder.h" />
+    <ClInclude Include="DocVectorBuilder.h" />
     <ClInclude Include="Index.h" />
     <ClInclude Include="IndexCompression.h" />
     <ClInclude Include="PointersTable.h" />

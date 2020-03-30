@@ -7,7 +7,7 @@ void Index::enumerateFilesInDir(const std::string& directoryPath)
     setlocale(LC_ALL, "");
 
     std::wstring stemp = std::wstring(directoryPath.begin(), directoryPath.end());
-    stemp += L"*.fb2";
+    stemp += L"*.txt";
     LPCWSTR path = stemp.c_str();
 
     number_filename.clear();

@@ -110,8 +110,8 @@ protected:
 		return result;
 	}
 
+	std::map<std::string, std::set<short>> invertedIndex;  //access for DocVectorBuilder
 private:
-	std::map<std::string, std::set<short>> invertedIndex;
 	std::map<std::string, std::set<short>> biwordIndex;
 	std::map<std::string, std::set<std::string>> threegramIndex;
 	PositionalIndex positionalIndex;

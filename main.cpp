@@ -1,10 +1,8 @@
 
 #include "SPIMI.h"
 #include <ctime>
-#include <bitset>
-
-#include "tinyxml2.h"
 #include "ZoneIndex.h"
+#include "ClusterBuilder.h"
 
 
 
@@ -12,7 +10,7 @@
 
 int main()
 {
-    const std::string directoryPath = "Col\\";
+    const std::string directoryPath = "Books\\";
     //Index index(directoryPath);
 
 
@@ -93,7 +91,7 @@ int main()
     }*/
 
 
-   /* SPIMI test(directoryPath);*/
+    //SPIMI test(directoryPath);
     //auto begin = clock();   //count time 
     //test.generateInvertedIndexBySPIMI(directoryPath);
     //auto end = clock();  //end counting
@@ -102,18 +100,9 @@ int main()
     
     /*IndexCompression compressor = test.getCompressor();*/
 
-   /* tinyxml2::XMLDocument doc;
-    doc.LoadFile("XMLcollection\\test.txt");
-
-
   
-    tinyxml2::XMLElement* st = doc.FirstChildElement();
-    tinyxml2::XMLElement* end = doc.LastChildElement();
 
-    std::string s = st->Value();
-    std::cout << s;*/
-
-    ZoneIndex zoneIndex("XMLcollection\\");
+    /*ZoneIndex zoneIndex("XMLcollection\\");
     zoneIndex.generateZoneIndex();
 
 
@@ -121,16 +110,12 @@ int main()
     std::list<int> res = zoneIndex.zoneIndexSearch("Harry", zones);
     for (auto i : res) {
         std::cout << i << std::endl;
-    }
+    }*/
 
-    //std::cout<< doc.FirstChildElement("text")->GetText();
+    ClusterBuilder clusters(directoryPath);
+    clusters.generateClusters();
+  
     
-//std::set<std::pair<short, short>> test;
-//test.insert({ 2, 1 });
-//test.insert({ 1, 3 });    
-//test.insert({ 4, 0 });
-//for (auto i : test) {
-//    std::cout << i.second<<std::endl;
     return 0;
 }
 
