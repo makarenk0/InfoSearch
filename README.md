@@ -28,7 +28,9 @@ Provides different methods of files indexing
 ## Compression:<br>
 * dictionary in RAM compressing
 * postings lists: byte, 4-block encoding (both RAM and Hard drive) + word frequency
-
+* -
+## Interface
+* WPF MVVM, .NET Core platform (C# and C++)
 Tests:<br>
 Gutenberg collection<br>
 ## Machines
