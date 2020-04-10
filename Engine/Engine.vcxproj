@@ -91,7 +91,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -126,6 +126,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Btree.h" />
+    <ClInclude Include="ClusterBuilder.h" />
+    <ClInclude Include="DocVectorBuilder.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="Index.h" />
     <ClInclude Include="IndexCompression.h" />
@@ -133,7 +135,11 @@
     <ClInclude Include="PointersTable.h" />
     <ClInclude Include="PositionalIndex.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="PostingList.h" />
     <ClInclude Include="SPIMI.h" />
+    <ClInclude Include="tinyxml2.h" />
+    <ClInclude Include="ZoneIndex.h" />
+    <ResourceCompile Include="app.rc" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
@@ -154,20 +160,6 @@
     <ClCompile Include="SPIMI.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
     <ClCompile Include="ZoneIndex.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Btree.h" />
-    <ClInclude Include="ClusterBuilder.h" />
-    <ClInclude Include="DocVectorBuilder.h" />
-    <ClInclude Include="Index.h" />
-    <ClInclude Include="IndexCompression.h" />
-    <ClInclude Include="PointersTable.h" />
-    <ClInclude Include="PositionalIndex.h" />
-    <ClInclude Include="PostingList.h" />
-    <ClInclude Include="SPIMI.h" />
-    <ClInclude Include="tinyxml2.h" />
-    <ClInclude Include="ZoneIndex.h" />
-    <ResourceCompile Include="app.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="app.ico" />
