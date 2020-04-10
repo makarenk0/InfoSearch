@@ -2,26 +2,12 @@
 
 void Index::enumerateFilesInDir(const std::string& directoryPath)
 {
-    WIN32_FIND_DATA FindFileData = {0};
-    HANDLE hFind;
-    setlocale(LC_ALL, "");
-
-    std::wstring stemp = std::wstring(directoryPath.begin(), directoryPath.end());
-    stemp += L"*.txt";
-    LPCWSTR path = stemp.c_str();
-
-    number_filename.clear();
-    hFind = FindFirstFile(path, &FindFileData);
-    if (hFind == INVALID_HANDLE_VALUE) {
-        throw "Folder "+ directoryPath +" is empty";
-    }
-    else {
-        std::wstring ws(FindFileData.cFileName);  //TO DO: reduce the code
-        number_filename.insert({ 1, std::string(ws.begin(), ws.end()) });
-    }
-    for (int i = 2; FindNextFile(hFind, &FindFileData) != 0; i++) {
-        std::wstring ws(FindFileData.cFileName);
-        number_filename.insert({ i, std::string(ws.begin(), ws.end()) });
+    int filesCounter = 1;
+    for (const auto& entry : fs::recursive_directory_iterator(directoryPath)) {
+        if (entry.is_regular_file()) {
+            number_filename.insert({ filesCounter, entry });
+            ++filesCounter;
+        }
     }
 }
 
@@ -44,10 +30,10 @@ Index::Index()
 {
 }
 
-void Index::generateInvertedIndex(const std::string& directoryPath) {
+void Index::generateInvertedIndex() {
     std::ifstream file;
     for (auto i : number_filename) {
-        file.open(directoryPath + i.second);
+        file.open(i.second);
         std::string word = "";
         char buf;
         while (!file.eof()) {
@@ -67,11 +53,11 @@ void Index::generateInvertedIndex(const std::string& directoryPath) {
     printInFile(invertedIndex, "invertedIndex");
 }
 
-void Index::generateBiwordIndex(const std::string& directoryPath)
+void Index::generateBiwordIndex()
 {
     std::ifstream file;
     for (auto i : number_filename) {
-        file.open(directoryPath + i.second);
+        file.open(i.second);
         std::string word = "", previousWord = "";
         bool firstWord = true;
         char buf;
@@ -98,11 +84,11 @@ void Index::generateBiwordIndex(const std::string& directoryPath)
     printInFile(biwordIndex, "biwordIndex");
 }
 
-void Index::generatePositionalIndex(const std::string& directoryPath)
+void Index::generatePositionalIndex()
 {
     std::ifstream file;
     for (auto i : number_filename) {
-        file.open(directoryPath + i.second);
+        file.open(i.second);
         std::string word = "";
         int position = 0;
         char buf;

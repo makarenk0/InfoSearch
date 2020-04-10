@@ -45,7 +45,7 @@ void SPIMI::mergeFiles(const std::string& directoryPath)
    
 
     for (auto i : number_filename) {
-        readingStreams.push_back(std::ifstream(directoryPath + "\\" + i.second));
+        readingStreams.push_back(std::ifstream(i.second));
     }
    
     std::pair<std::string, std::set<int>>* topFileLines = new std::pair<std::string, std::set<int>>[nfiles];
@@ -130,7 +130,7 @@ void SPIMI::generateInvertedIndexBySPIMI(const std::string& directoryPath)
         }
         //--------------------------------------------------------------------
 
-        file.open(directoryPath + i.second);
+        file.open(i.second);
         std::string word = "";
        
         while (!file.eof()) {

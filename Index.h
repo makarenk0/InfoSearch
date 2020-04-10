@@ -8,9 +8,12 @@
 #include <string>
 #include <stack>
 #include <vector>
-#include <windows.h>
+#include <filesystem>
 #include "PositionalIndex.h"
 #include "Btree.h"
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 
 class Index {
@@ -46,7 +49,7 @@ protected:
 
 	void saveNumberOfFiles(const std::string& directoryPath);
 
-	std::map<short, std::string> number_filename;
+	std::map<short, fs::directory_entry> number_filename;
 
 	template<class T> void addWordToDictionary(std::map<std::string, std::set<T>>& index, const std::string& word, const T& value);
 
@@ -151,9 +154,9 @@ public:
 	Index(const std::string& directoryPath);
 	Index();
 
-	void generateInvertedIndex(const std::string& directoryPath);
-	void generateBiwordIndex(const std::string& directoryPath);
-	void generatePositionalIndex(const std::string& directoryPath);
+	void generateInvertedIndex();
+	void generateBiwordIndex();
+	void generatePositionalIndex();
 	void generatePermutermIndex();
 	void generateThreegramIndex();
 

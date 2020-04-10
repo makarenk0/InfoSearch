@@ -2,6 +2,7 @@
 #include "IndexCompression.h"
 #include "Index.h"
 #include <unordered_map>
+#include <windows.h>
 
 
 class SPIMI : Index

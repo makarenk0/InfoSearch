@@ -22,7 +22,6 @@ private:
         }
     };
     void fillZoneIndex(tinyxml2::XMLElement* start, tinyxml2::XMLElement* lastEl, const int& docId);
-    const std::string _directoryPath;
     void insertWord(const std::string& word, const int& docId);
     tinyxml2::XMLElement* findMetaData(tinyxml2::XMLElement* start);
     tinyxml2::XMLElement* findBody(tinyxml2::XMLElement* start);

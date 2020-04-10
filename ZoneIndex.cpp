@@ -99,7 +99,7 @@ tinyxml2::XMLElement* ZoneIndex::findMetaData(tinyxml2::XMLElement* start)
     return start;
 }
 
-ZoneIndex::ZoneIndex(const std::string& path) : Index(path), _directoryPath(path)
+ZoneIndex::ZoneIndex(const std::string& path) : Index(path)
 {
 }
 
@@ -107,7 +107,7 @@ void ZoneIndex::generateZoneIndex()
 {
     for (auto i : number_filename) {
         tinyxml2::XMLDocument doc;
-        doc.LoadFile((_directoryPath+i.second).c_str());
+        doc.LoadFile(i.second.path().string().c_str());
 
         tinyxml2::XMLElement* startNode = doc.FirstChildElement();
         tinyxml2::XMLElement* metaNode = findMetaData(startNode);

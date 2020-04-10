@@ -58,5 +58,10 @@ void ClusterBuilder::generateClusters()
 		}
 		suitableCluster->_followers.push_back(it);
 	}
+
+#ifndef _NDEBUG
 	printClustersInConsole();
+#endif // !NDEBUG
+
+	
 }

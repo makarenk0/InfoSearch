@@ -79,7 +79,7 @@ void DocVectorBuilder::generateVectorSpaceModel()
 {
     std::ifstream file;
     for (auto i : number_filename) {
-        file.open(_directoryPath + i.second);
+        file.open(i.second);
         _vecSpaceModel.insert({ int(i.first), MyVector() });
         std::string word = "";
         char buf;
