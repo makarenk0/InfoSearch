@@ -3,8 +3,6 @@
 
 void Engine::Controller::initIndex(String^ path)
 {
-	msclr::interop::marshal_context context;
-	std::string standardString = "Index\\";
-	index = new ::Index(standardString);
-	//throw gcnew System::NotImplementedException();
+	std::string unmanaged = msclr::interop::marshal_as<std::string>(path);
+	index = new ::Index(unmanaged);
 }

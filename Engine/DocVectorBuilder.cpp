@@ -1,5 +1,7 @@
+#include "pch.h"
 #include "DocVectorBuilder.h"
 #include <cassert>
+
 
 
 float DocVectorBuilder::scalarMultiply(MyVector& vec1, MyVector& vec2)

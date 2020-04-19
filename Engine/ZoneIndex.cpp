@@ -1,4 +1,6 @@
+#include "pch.h"
 #include "ZoneIndex.h"
+
 
 
 void ZoneIndex::fillZoneIndex(tinyxml2::XMLElement* start, tinyxml2::XMLElement* lastEl, const int& docId) {

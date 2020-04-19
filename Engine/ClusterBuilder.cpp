@@ -1,4 +1,6 @@
+#include "pch.h"
 #include "ClusterBuilder.h"
+
 
 
 void ClusterBuilder::printClustersInConsole()

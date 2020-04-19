@@ -46,19 +46,19 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="ClusterBuilder.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Исходные файлы\Core</Filter>
     </ClInclude>
     <ClInclude Include="DocVectorBuilder.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Исходные файлы\Core</Filter>
     </ClInclude>
     <ClInclude Include="PostingList.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Исходные файлы\Core</Filter>
     </ClInclude>
     <ClInclude Include="tinyxml2.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Исходные файлы\Core</Filter>
     </ClInclude>
     <ClInclude Include="ZoneIndex.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Исходные файлы\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -90,16 +90,16 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="ClusterBuilder.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\Core</Filter>
     </ClCompile>
     <ClCompile Include="DocVectorBuilder.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\Core</Filter>
     </ClCompile>
     <ClCompile Include="tinyxml2.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\Core</Filter>
     </ClCompile>
     <ClCompile Include="ZoneIndex.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

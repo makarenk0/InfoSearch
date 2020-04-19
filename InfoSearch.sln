@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29911.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interface", "Interface\Interface.csproj", "{8948F386-4BF6-439A-A7A7-6F1E31BF2A96}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Interface", "Interface\Interface.csproj", "{8948F386-4BF6-439A-A7A7-6F1E31BF2A96}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "Engine\Engine.vcxproj", "{8B1AC675-85B0-4AE6-88AB-89BD80B20EB7}"
 EndProject
@@ -30,8 +30,8 @@ Global
 		{8948F386-4BF6-439A-A7A7-6F1E31BF2A96}.Release|x86.ActiveCfg = Release|Any CPU
 		{8948F386-4BF6-439A-A7A7-6F1E31BF2A96}.Release|x86.Build.0 = Release|Any CPU
 		{8B1AC675-85B0-4AE6-88AB-89BD80B20EB7}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{8B1AC675-85B0-4AE6-88AB-89BD80B20EB7}.Debug|x64.ActiveCfg = Debug|x64
-		{8B1AC675-85B0-4AE6-88AB-89BD80B20EB7}.Debug|x64.Build.0 = Debug|x64
+		{8B1AC675-85B0-4AE6-88AB-89BD80B20EB7}.Debug|x64.ActiveCfg = Debug|Win32
+		{8B1AC675-85B0-4AE6-88AB-89BD80B20EB7}.Debug|x64.Build.0 = Debug|Win32
 		{8B1AC675-85B0-4AE6-88AB-89BD80B20EB7}.Debug|x86.ActiveCfg = Debug|Win32
 		{8B1AC675-85B0-4AE6-88AB-89BD80B20EB7}.Debug|x86.Build.0 = Debug|Win32
 		{8B1AC675-85B0-4AE6-88AB-89BD80B20EB7}.Release|Any CPU.ActiveCfg = Release|Win32
