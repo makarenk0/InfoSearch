@@ -148,6 +148,8 @@ private:
 	std::map<short, std::set<int>> positionalIntersect(std::map<short, std::set<int>>& list1, std::map<short, std::set<int>>& list2, const int& k);
 	std::map<short, std::set<int>> positionalIntersect(std::map<short, std::set<int>>& list1, std::map<short, std::set<int>>& list2);
 
+	unsigned long long _indexingDirSize = 0;
+	unsigned long long _bytesToIndexLeft = 0;
 public:
 	enum class IndexName {inverted, biword, positional};
 
@@ -159,6 +161,9 @@ public:
 	void generatePositionalIndex();
 	void generatePermutermIndex();
 	void generateThreegramIndex();
+
+	unsigned long long getIndexingDirSize() { return _indexingDirSize; }
+	unsigned long long getIndexingSizeLeft() { return _bytesToIndexLeft; }
 
 	void loadIndex(IndexName name);
 	

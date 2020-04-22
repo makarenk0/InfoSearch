@@ -13,5 +13,12 @@ namespace Engine {
 		::Index* index;
 	public:
 		void initIndex(String^ path);
+
+		void generateInvertedIndex();	
+		void generateBiwordIndex();
+		void generatePositionalIndex();
+
+		UInt64 getIndexingDirSize();
+		UInt64 getIndexingSizeLeft();
 	};
 }

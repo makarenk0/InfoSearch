@@ -7,6 +7,10 @@ void Index::enumerateFilesInDir(const std::string& directoryPath)
     int filesCounter = 1;
     for (const auto& entry : fs::recursive_directory_iterator(directoryPath)) {
         if (entry.is_regular_file()) {
+           
+            _indexingDirSize += fs::file_size(entry);
+            
+           
             number_filename.insert({ filesCounter, entry });
             ++filesCounter;
         }
@@ -34,12 +38,20 @@ Index::Index()
 
 void Index::generateInvertedIndex() {
     std::ifstream file;
+
+    #pragma region Statistic
+        _bytesToIndexLeft = _indexingDirSize;
+    #pragma endregion
+
     for (auto i : number_filename) {
         file.open(i.second);
         std::string word = "";
         char buf;
         while (!file.eof()) {
             buf = file.get();
+            #pragma region StatisticChange
+                --_bytesToIndexLeft;
+            #pragma endregion
             if (buf < 65 ||(buf>90&&buf<97)|| buf>122) {
                 if (word != "") {
                     addWordToDictionary(invertedIndex, word, i.first);
@@ -52,12 +64,17 @@ void Index::generateInvertedIndex() {
         }
         file.close();
     }
+    _bytesToIndexLeft = 0;
     printInFile(invertedIndex, "invertedIndex");
 }
 
 void Index::generateBiwordIndex()
 {
     std::ifstream file;
+    #pragma region Statistic
+        _bytesToIndexLeft = _indexingDirSize;
+    #pragma endregion
+
     for (auto i : number_filename) {
         file.open(i.second);
         std::string word = "", previousWord = "";
@@ -65,6 +82,9 @@ void Index::generateBiwordIndex()
         char buf;
         while (!file.eof()) {
             buf = file.get();
+            #pragma region StatisticChange
+                --_bytesToIndexLeft;
+            #pragma endregion
             if (buf < 65 || buf>122) {
                 if (!word.empty()) {
                     if (firstWord) {
@@ -83,12 +103,17 @@ void Index::generateBiwordIndex()
         }
         file.close();
     }
+    _bytesToIndexLeft = 0;
     printInFile(biwordIndex, "biwordIndex");
 }
 
 void Index::generatePositionalIndex()
 {
     std::ifstream file;
+    #pragma region Statistic
+        _bytesToIndexLeft = _indexingDirSize;
+    #pragma endregion
+
     for (auto i : number_filename) {
         file.open(i.second);
         std::string word = "";
@@ -96,6 +121,9 @@ void Index::generatePositionalIndex()
         char buf;
         while (!file.eof()) {
             buf = file.get();
+            #pragma region StatisticChange
+                --_bytesToIndexLeft;
+            #pragma endregion
             if (buf < 65 || buf>122) {
                 if (word != "") {
                     positionalIndex.addNewWord(word, 1, i.first, position);
@@ -109,6 +137,7 @@ void Index::generatePositionalIndex()
         }
         file.close();
     }
+    _bytesToIndexLeft = 0;
     positionalIndex.printInFile("positionalIndex", number_filename.size());
 }
 
