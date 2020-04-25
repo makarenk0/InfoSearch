@@ -68,6 +68,10 @@ namespace Interface.ViewModel
         public UInt64 SizeLeft
         {
             get { return _model?.IndexingSizeLeft / 1000000 ?? 0; }
+            set { 
+                _model.IndexingSizeLeft = value;
+                OnPropertyChanged();
+            }
         }
         public UInt64 IndexingSpeed
         {
@@ -179,6 +183,8 @@ namespace Interface.ViewModel
                 _indexGenFunctions[functionNum]();
                 timer.Dispose();
                 CoreIsFree = true;
+                SizeLeft = 0;
+                IndexingPercentage = 100;
             });
             
         }

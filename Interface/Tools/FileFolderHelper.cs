@@ -30,12 +30,12 @@ namespace Interface.Tools
         }
         internal static String CreateOrPickIndexesFolder(int folderId)
         {
-            String path = AppFolderPath + "\\Section" + folderId +"\\";
+            String path = AppFolderPath + "\\Section" + folderId + "\\";
             if (Directory.Exists(path))
             {
                 return path;
             }
-            Directory.CreateDirectory(path);
+            Directory.CreateDirectory(path + "SPIMI\\Compressed");
             return path;
         }
     }

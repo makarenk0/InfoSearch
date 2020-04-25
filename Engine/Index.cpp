@@ -45,7 +45,6 @@ void Index::generateInvertedIndex() {
         }
         file.close();
     }
-    _bytesToIndexLeft = 0;
     printInFile(invertedIndex, "invertedIndex");
 }
 
@@ -84,7 +83,6 @@ void Index::generateBiwordIndex()
         }
         file.close();
     }
-    _bytesToIndexLeft = 0;
     printInFile(biwordIndex, "biwordIndex");
 }
 
@@ -118,7 +116,6 @@ void Index::generatePositionalIndex()
         }
         file.close();
     }
-    _bytesToIndexLeft = 0;
     positionalIndex.printInFile(_savingPath + "positionalIndex", number_filename.size());
 }
 
@@ -151,7 +148,6 @@ void Index::generateBySPIMICompressedIndex()
 {
     _bytesToIndexLeft = _indexingDirSize;
     compressedSPIMIIndex.generateInvertedIndexBySPIMI(_bytesToIndexLeft);
-    _bytesToIndexLeft = 0;
 }
 
 template<class T> void Index::addWordToDictionary(std::map<std::string, std::set<T>>& dictionary, const std::string& word, const T& value) {
@@ -526,7 +522,7 @@ std::map<std::string, std::set<short>> Index::freeWildcardQuery3Gramm(std::strin
     std::string firstPart = '$' + word.substr(0, word.find('*'));
     std::string secondPart = word.substr(word.find('*')+1, word.length()) + '$';
 
-    for (int i = 0; i < 1.0*firstPart.length() - 2; i++) {
+    for (int i = 0; i < 1.0 * firstPart.length() - 2; i++) {
         request += firstPart.substr(i, 3);
         request += " AND ";
     }
