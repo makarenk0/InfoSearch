@@ -18,10 +18,10 @@ namespace Interface
 
 
 
-        public IndexModel(String path)
+        public IndexModel(String indexingPath, String savingPath)
         {
             _controller = new Controller(); //creating controller which control all C++ code
-            _controller.initIndex(path);  //this calls C++ dll which observe files in directory
+            _controller.initIndex(indexingPath, savingPath);  //this calls C++ dll which observe files in directory
         }
 
         public String IndexingPath{
@@ -56,6 +56,10 @@ namespace Interface
         public void PositionalIndexGenerate()
         {
             _controller.generatePositionalIndex();
+        }
+        public void IndexBySPIMIGenerate()
+        {
+            _controller.generateIndexBySPIMI();
         }
 
 

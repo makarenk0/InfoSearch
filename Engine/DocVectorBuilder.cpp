@@ -73,7 +73,7 @@ void DocVectorBuilder::normalizeVector(MyVector& vec)
     }
 }
 
-DocVectorBuilder::DocVectorBuilder(const std::string& path) : Index(path), _directoryPath(path)
+DocVectorBuilder::DocVectorBuilder(const std::string& path) : Index(path, 0), _directoryPath(path)
 {
 }
 

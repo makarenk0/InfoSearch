@@ -32,31 +32,58 @@
         <Button Margin="10,0,0,0" Name="ProceedButton" Width="110" Height="25" HorizontalAlignment="Left"  Grid.Row="0" Grid.Column="0" Content="Choose directory" Command="{Binding ChooseDirCommand}"></Button>
         <TextBlock Margin="130,0,0,0" Name="IndexingPath" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"  VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="15" Text="{Binding IndexingPath, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"></TextBlock>
 
-        <TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" FontSize="25">Generate indexex:</TextBlock>
+       
         <!--Buttons for generating indexes -->
-        <Button Name="GenerateInvertedIndexButton" Width="110" Height="25" Margin="0,0,0,0"  Grid.Row="3" Grid.Column="0" Content="Inverted" Command="{Binding InvertedIndexCommand}" CommandParameter="0"></Button>
-        <Button Name="GenerateBiwordIndexButton" Width="110" Height="25" Margin="0,0,0,0"  Grid.Row="4" Grid.Column="0" Content="Biword" Command="{Binding InvertedIndexCommand}" CommandParameter="1"></Button>
-        <Button Name="GeneratePositionalIndexButton" Width="110" Height="25" Margin="0,0,0,0"  Grid.Row="5" Grid.Column="0" Content="Positional" Command="{Binding InvertedIndexCommand}" CommandParameter="2"></Button>
+        
 
         <!-- ___________________________  -->
-        <fa:ImageAwesome Visibility="{Binding SpinnerVisibility, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Right" Margin="0,0,100,0" Grid.Row="{Binding SpinnerPosition, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" Icon="Refresh" Spin="True" Height="25" Width="25" />
-       
 
+
+        <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" FontSize="25">Control panel</TextBlock>
+        <Grid Name="ControlPanel" Grid.Row="2" Grid.Column="0" Grid.RowSpan="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+
+            <TextBlock HorizontalAlignment="Center" FontSize="20">Index type</TextBlock>
+            <Button Name="GenerateInvertedIndexButton" Width="90" Height="25" Margin="0,0,0,0"  Grid.Row="1" Grid.Column="0" Content="Inverted" Command="{Binding GenerateIndexCommand}" CommandParameter="0"></Button>
+            <Button Name="GenerateBiwordIndexButton" Width="90" Height="25" Margin="0,0,0,0"  Grid.Row="2" Grid.Column="0" Content="Biword" Command="{Binding GenerateIndexCommand}" CommandParameter="1"></Button>
+            <Button Name="GeneratePositionalIndexButton" Width="90" Height="25" Margin="0,0,0,0"  Grid.Row="3" Grid.Column="0" Content="Positional" Command="{Binding GenerateIndexCommand}" CommandParameter="2"></Button>
+            <Button Name="GenerateIndexBySpimiButton" Background="DarkRed" Width="90" Height="25" Margin="0,0,0,0"  Grid.Row="4" Grid.Column="0" Content="SPIMI algorithm" Command="{Binding GenerateIndexCommand}" CommandParameter="3"></Button>
+
+
+            <TextBlock Grid.Column="3" HorizontalAlignment="Center" FontSize="20">Status</TextBlock>
+            <fa:ImageAwesome Visibility="{Binding SpinnerVisibility, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Grid.Row="{Binding SpinnerPosition, UpdateSourceTrigger=PropertyChanged}" Grid.Column="4" Icon="Refresh" Spin="True" Height="25" Width="25" />
+        </Grid>
         
         <xrpb:RadialProgressBar Grid.Row="2" Grid.Column="1" Grid.RowSpan="5" Value="{Binding IndexingPercentage, UpdateSourceTrigger=PropertyChanged}"
 			    Width="200" Height="200" ArcWidth="25" InnerBackgroundBrush="#302f3d" Foreground="#4cd1fe"/>
         <TextBlock Margin="12,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1" Grid.RowSpan="5" Text="{Binding IndexingPercentage, UpdateSourceTrigger=PropertyChanged, StringFormat='\{0\}%'}" FontSize="30" Foreground="#4cd1fe" ></TextBlock>
 
-        <TextBlock Grid.Row="7" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20">Collection size:</TextBlock>
+        <TextBlock Margin="20,0,0,0" Grid.Row="7" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20">Collection size:</TextBlock>
         <TextBlock Margin="0,0,50,0" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="7" Grid.Column="1" Text="{Binding WholeDirSize, UpdateSourceTrigger=PropertyChanged, StringFormat='\{0\} mbytes'}" FontSize="20" Foreground="#302f3d" ></TextBlock>
-        
-        <TextBlock Grid.Row="8" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20">Left to index:</TextBlock>
+
+        <TextBlock Margin="20,0,0,0" Grid.Row="8" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20">Left to index:</TextBlock>
         <TextBlock Margin="0,0,50,0" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="8" Grid.Column="1" Text="{Binding SizeLeft, UpdateSourceTrigger=PropertyChanged, StringFormat='\{0\} mbytes'}" FontSize="20" Foreground="#302f3d" ></TextBlock>
 
-        <TextBlock Grid.Row="9" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20">Speed:</TextBlock>
+        <TextBlock Margin="20,0,0,0" Grid.Row="9" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20">Speed:</TextBlock>
         <TextBlock Margin="0,0,50,0" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="9" Grid.Column="1" Text="{Binding IndexingSpeed, UpdateSourceTrigger=PropertyChanged, StringFormat='\{0\} kB/sec'}" FontSize="20" Foreground="#302f3d" ></TextBlock>
 
-        <TextBlock Grid.Row="10" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20">Time spent:</TextBlock>
+        <TextBlock Margin="20,0,0,0" Grid.Row="10" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20">Time spent:</TextBlock>
         <TextBlock Margin="0,0,50,0" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="10" Grid.Column="1" Text="{Binding IndexingTime, UpdateSourceTrigger=PropertyChanged}" FontSize="20" Foreground="#302f3d" ></TextBlock>
     </Grid>
 </UserControl>

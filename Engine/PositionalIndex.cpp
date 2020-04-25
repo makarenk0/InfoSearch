@@ -7,14 +7,13 @@ PositionalIndex::PositionalIndex()
 
 }
 
-PositionalIndex::PositionalIndex(const std::string& fileName)
+PositionalIndex::PositionalIndex(const std::string& filePath)
 {
-    readFromFile(fileName);
+    readFromFile(filePath);
 }
 
 void PositionalIndex::insertWordFromDictionary(std::string& line)
 {
-
     std::string wordBuf = "";
     readWord(line, wordBuf);
     std::string word = wordBuf;
@@ -64,10 +63,10 @@ void PositionalIndex::incrementFrequency() {
     ++lastInsertedElement->second.first;
 }
 
-void PositionalIndex::printInFile(const std::string& fileName, const int& filesNumber)
+void PositionalIndex::printInFile(const std::string& filePath, const int& filesNumber)
 {
     std::ofstream out;
-    out.open("Index\\" + fileName + ".txt");
+    out.open(filePath + ".txt");
     out << filesNumber << std::endl;
     for (auto i : data) {
         out << i.first << " " << i.second.first << " ; ";
@@ -84,10 +83,11 @@ void PositionalIndex::printInFile(const std::string& fileName, const int& filesN
     out.close();
 }
 
-void PositionalIndex::readFromFile(const std::string& fileName)
+bool PositionalIndex::readFromFile(const std::string& filePath)
 {
     std::string lineBuf;
-    std::ifstream file("Index\\" + fileName);
+    std::ifstream file(filePath);
+    if (file.fail()) return false;
     getline(file, lineBuf);
     fileNumber = std::stoi(lineBuf);
     while (true) {
@@ -109,6 +109,7 @@ void PositionalIndex::readFromFile(const std::string& fileName)
         }
     }
     file.close();
+    return true;
 }
 
 bool PositionalIndex::empty()

@@ -1,16 +1,20 @@
 #pragma once
 #include "IndexCompression.h"
-#include "Index.h"
 #include <unordered_map>
 #include <windows.h>
+#include <map>
+#include <iostream>
+#include "CommonIndexingFunctions.h"
 
 
-class SPIMI : Index
+class SPIMI
 {
 private:
+
 	IndexCompression _compressor;
-	const std::string compressedDictionaryPath = "Index\\SPIMI\\Compressed\\MergedDictionary.txt";
-	const std::string compressedPostingListsPath = "Index\\SPIMI\\Compressed\\MergedPostings.bin";
+	std::string compressedDictionaryPath;
+	std::string compressedPostingListsPath;
+	const std::string& _savingPath;
 
 	std::unordered_map<std::string, std::set<int>> _dataBuf;
 
@@ -32,9 +36,12 @@ private:
 
 	void mergeFiles(const std::string& directoryPath);
 
+	void readWord(std::string& line, std::string& value);
+
+	std::map<short, fs::directory_entry>& _number_filename;
 public:
-	SPIMI(const std::string& directoryPath);
-	void generateInvertedIndexBySPIMI(const std::string& directoryPath);
+	SPIMI(const std::string& savingPath, std::map<short, fs::directory_entry>& number_filename);
+	void generateInvertedIndexBySPIMI(unsigned long long& _bytesToIndexLeft);
 	IndexCompression& getCompressor();
 	
 };

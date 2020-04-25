@@ -101,7 +101,7 @@ tinyxml2::XMLElement* ZoneIndex::findMetaData(tinyxml2::XMLElement* start)
     return start;
 }
 
-ZoneIndex::ZoneIndex(const std::string& path) : Index(path)
+ZoneIndex::ZoneIndex(const std::string& path) : Index(path, 0)
 {
 }
 

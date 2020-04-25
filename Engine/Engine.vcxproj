@@ -128,6 +128,7 @@
   <ItemGroup>
     <ClInclude Include="Btree.h" />
     <ClInclude Include="ClusterBuilder.h" />
+    <ClInclude Include="CommonIndexingFunctions.h" />
     <ClInclude Include="DocVectorBuilder.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="Index.h" />
@@ -146,6 +147,7 @@
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="Btree.cpp" />
     <ClCompile Include="ClusterBuilder.cpp" />
+    <ClCompile Include="CommonIndexingFunctions.cpp" />
     <ClCompile Include="DocVectorBuilder.cpp" />
     <ClCompile Include="Controller.cpp" />
     <ClCompile Include="Index.cpp" />

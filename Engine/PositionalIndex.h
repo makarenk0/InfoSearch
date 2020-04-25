@@ -24,7 +24,7 @@ public:
 	void setWordFrequency(const int& frequency);
 	void incrementFrequency();
 	void printInFile(const std::string& fileName, const int& filesNumber);
-	void readFromFile(const std::string& fileName);
+	bool readFromFile(const std::string& fileName);
 	bool empty();
 	std::map<short, std::set<int>>& getPostingsList(const std::string& word);
 };

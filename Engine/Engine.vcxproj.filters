@@ -60,6 +60,9 @@
     <ClInclude Include="ZoneIndex.h">
       <Filter>Исходные файлы\Core</Filter>
     </ClInclude>
+    <ClInclude Include="CommonIndexingFunctions.h">
+      <Filter>Исходные файлы\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp">
@@ -103,6 +106,9 @@
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="CommonIndexingFunctions.cpp">
+      <Filter>Исходные файлы\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Interface": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    }
+  }
+}

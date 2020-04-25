@@ -1,4 +1,7 @@
-﻿using Interface.Tools.MVVM;
+﻿using Interface.Tools;
+using Interface.Tools.DataStorage;
+using Interface.Tools.Managers;
+using Interface.Tools.MVVM;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
@@ -14,7 +17,7 @@ namespace Interface.ViewModel
         private bool _coreIsFree = true;
         private int _spinnerPosition = 0;
         private RelayCommand<object> _chooseDirCommand;
-        private RelayCommand<object> _invertedIndexCommand;
+        private RelayCommand<object> _generateIndexCommand;
 
         private TimeSpan _indexingTimer;
         private Dictionary<int, IndexGeneratingFunction> _indexGenFunctions;
@@ -23,18 +26,18 @@ namespace Interface.ViewModel
        
         public IndexViewModel()
         {
+            StationManager.Initialize(new SerializedDataStorage());
             _indexGenFunctions = new Dictionary<int, IndexGeneratingFunction>();
 
             IndexGeneratingFunction function0 = InvertedIndexGenerate;
             IndexGeneratingFunction function1 = BiwordIndexGenerate;
             IndexGeneratingFunction function2 = PositionalIndexGenerate;
-            //IndexGeneratingFunction function3 = _model.InvertedIndexGenerate;
+            IndexGeneratingFunction function3 = IndexBySPIMIGenerate;
             //IndexGeneratingFunction function4 = _model.InvertedIndexGenerate;
             _indexGenFunctions.Add(0, function0);
             _indexGenFunctions.Add(1, function1);
             _indexGenFunctions.Add(2, function2);
-
-            //_indexGenFunctions.Add(3, function3);
+            _indexGenFunctions.Add(3, function3);
             //_indexGenFunctions.Add(4, function4);
         }
 
@@ -50,6 +53,10 @@ namespace Interface.ViewModel
         private void PositionalIndexGenerate()
         {
             _model.PositionalIndexGenerate();
+        }
+        private void IndexBySPIMIGenerate()
+        {
+            _model.IndexBySPIMIGenerate();
         }
         #endregion
 
@@ -99,11 +106,11 @@ namespace Interface.ViewModel
             }
         }
 
-        public RelayCommand<object> InvertedIndexCommand
+        public RelayCommand<object> GenerateIndexCommand
         {
             get
             {
-                return _invertedIndexCommand ?? (_invertedIndexCommand = new RelayCommand<object>(IndexGenInplementation,
+                return _generateIndexCommand ?? (_generateIndexCommand = new RelayCommand<object>(IndexGenInplementation,
                     o => CoreIsFree && !String.IsNullOrEmpty(IndexingPath)));
             }
         }
@@ -144,7 +151,12 @@ namespace Interface.ViewModel
             CommonFileDialogResult result = dialog.ShowDialog();
             if (result.ToString() == "Ok")
             {
-               _model = new IndexModel(dialog.FileName.ToString());  // creating a model to test C++ then
+                String newPath = dialog.FileName.ToString();
+
+                StationManager.DataStorage.AddPath(newPath);
+                int id = StationManager.DataStorage.GetPathNum(newPath);
+
+                _model = new IndexModel(newPath, FileFolderHelper.CreateOrPickIndexesFolder(id));  // creating a model to test C++ then
                 IndexingPath = dialog.FileName.ToString();
             }
             OnPropertyChanged("WholeDirSize");
@@ -159,9 +171,10 @@ namespace Interface.ViewModel
             TimerCallback tm = new TimerCallback(IndexingPercentageIncrease); 
             Timer timer = new Timer(tm, 0, 1000, 1000);
             
+            
 
             CoreIsFree = false;
-            SpinnerPosition = functionNum + 3;
+            SpinnerPosition = functionNum + 1;
             await Task.Run(() => {
                 _indexGenFunctions[functionNum]();
                 timer.Dispose();

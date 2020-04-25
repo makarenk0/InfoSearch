@@ -2,20 +2,6 @@
 #include "Index.h"
 
 
-void Index::enumerateFilesInDir(const std::string& directoryPath)
-{
-    int filesCounter = 1;
-    for (const auto& entry : fs::recursive_directory_iterator(directoryPath)) {
-        if (entry.is_regular_file()) {
-           
-            _indexingDirSize += fs::file_size(entry);
-            
-           
-            number_filename.insert({ filesCounter, entry });
-            ++filesCounter;
-        }
-    }
-}
 
 void Index::saveNumberOfFiles(const std::string& directoryPath)
 {
@@ -27,18 +13,13 @@ void Index::saveNumberOfFiles(const std::string& directoryPath)
     file.close();
 }
 
-Index::Index(const std::string directoryPath)
+Index::Index(const std::string directoryPath, const std::string savingPath) : _savingPath(savingPath), compressedSPIMIIndex(_savingPath, number_filename)
 {
-    enumerateFilesInDir(directoryPath);
-}
-
-Index::Index()
-{
+    _indexingDirSize = CommonIndexingFunctions::enumerateFilesInDir(directoryPath, number_filename);
 }
 
 void Index::generateInvertedIndex() {
     std::ifstream file;
-
     #pragma region Statistic
         _bytesToIndexLeft = _indexingDirSize;
     #pragma endregion
@@ -138,7 +119,7 @@ void Index::generatePositionalIndex()
         file.close();
     }
     _bytesToIndexLeft = 0;
-    positionalIndex.printInFile("positionalIndex", number_filename.size());
+    positionalIndex.printInFile(_savingPath + "positionalIndex", number_filename.size());
 }
 
 void Index::generatePermutermIndex()
@@ -166,6 +147,13 @@ void Index::generateThreegramIndex()
     }
 }
 
+void Index::generateBySPIMICompressedIndex()
+{
+    _bytesToIndexLeft = _indexingDirSize;
+    compressedSPIMIIndex.generateInvertedIndexBySPIMI(_bytesToIndexLeft);
+    _bytesToIndexLeft = 0;
+}
+
 template<class T> void Index::addWordToDictionary(std::map<std::string, std::set<T>>& dictionary, const std::string& word, const T& value) {
     std::set<T> arr;
     arr.insert(value);
@@ -177,7 +165,7 @@ template<class T> void Index::addWordToDictionary(std::map<std::string, std::set
 
 void Index::printInFile(std::map<std::string, std::set<short>>& dictionary, const std::string& indexName) {
     std::ofstream out;
-    out.open("Index\\"+ indexName +".txt");
+    out.open(_savingPath + indexName +".txt");
     for (auto i : dictionary) {
         out << i.first <<" ";
         for (auto j : i.second) {
@@ -193,22 +181,30 @@ void Index::loadIndex(IndexName name)
 {
     switch (name) {
     case IndexName::inverted:
-        if(invertedIndex.empty()) readFromFile("invertedIndex.txt", invertedIndex);
+        if (invertedIndex.empty())
+            if (!readFromFile("invertedIndex.txt", invertedIndex))
+                generateInvertedIndex();
         break;
     case IndexName::biword:
-        if (biwordIndex.empty()) readFromFile("biwordIndex.txt", biwordIndex);
+        if (biwordIndex.empty())
+            if (!readFromFile("biwordIndex.txt", biwordIndex))
+                generateBiwordIndex();
         break;
     case IndexName::positional:
-        if (positionalIndex.empty()) positionalIndex.readFromFile("positionalIndex.txt");
+        if (positionalIndex.empty())
+            if (!positionalIndex.readFromFile(_savingPath + "positionalIndex.txt"))
+                generatePositionalIndex();
         break;
     } 
 }
 
-void Index::readFromFile(const std::string& fileName, std::map<std::string, std::set<short>>& index)
+bool Index::readFromFile(const std::string& fileName, std::map<std::string, std::set<short>>& index)
 {
     std::ifstream file;
     std::string lineBuf;
-    file.open("Index\\"+ fileName);
+    file.open(_savingPath + fileName);
+    if (file.fail()) { return false; }
+
     while (true) {
         getline(file, lineBuf);
         if (lineBuf.empty()) {
@@ -222,6 +218,7 @@ void Index::readFromFile(const std::string& fileName, std::map<std::string, std:
         }
     }
     file.close();
+    return true;
 }
 
 std::map<std::string, std::set<short>>::iterator Index::insertMapKey(std::string& lineBuf, std::map<std::string, std::set<short>>& result)
@@ -371,8 +368,6 @@ std::set<std::string> Index::notSearch(const std::set<std::string>& list1) {
 std::set<Index::PostingList> Index::notSearch(const std::set<PostingList>& list1) {
     return std::set<PostingList>();
 }
-
-
 
 std::map<short, std::set<int>> Index::positionalIntersect(std::map<short, std::set<int>>& list1, std::map<short, std::set<int>>& list2, const int& k)
 {

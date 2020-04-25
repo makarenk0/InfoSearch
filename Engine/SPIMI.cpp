@@ -3,6 +3,7 @@
 #include <ctime>
 
 
+
 void SPIMI::addWordToDictionary(const std::string& word, const int& value, double& memoryCounter)
 {
     std::pair<std::unordered_map<std::string, std::set<int>>::iterator, bool> found = _dataBuf.insert({ word,  {value} });
@@ -38,15 +39,19 @@ std::pair<std::string, std::set<int>> SPIMI::getLineFromFile(std::ifstream& stre
 
 void SPIMI::mergeFiles(const std::string& directoryPath)
 {
-    enumerateFilesInDir(directoryPath);
-    int nfiles = number_filename.size();
+    std::map<short, fs::directory_entry> number_block;
+    CommonIndexingFunctions::enumerateFilesInDir(directoryPath, number_block);
+    int nfiles = number_block.size();
     std::vector<std::ifstream> readingStreams;
 
+
+    compressedDictionaryPath = _savingPath + "SPIMI\\Compressed\\MergedDictionary.txt";
+    compressedPostingListsPath = _savingPath + "SPIMI\\Compressed\\MergedPostings.bin";
     std::ofstream dictionaryOut(compressedDictionaryPath);
     std::ofstream postingsOut(compressedPostingListsPath, std::ios::binary);
    
 
-    for (auto i : number_filename) {
+    for (auto i : number_block) {
         readingStreams.push_back(std::ifstream(i.second));
     }
    
@@ -87,13 +92,26 @@ void SPIMI::mergeFiles(const std::string& directoryPath)
     postingsOut.close();
 }
 
-SPIMI::SPIMI(const std::string& directoryPath) : Index(directoryPath)
+void SPIMI::readWord(std::string& line, std::string& value)
+{
+    value = line.substr(0, line.find(" "));
+    if (line.find(" ") == line.npos) {
+        line.clear();
+    }
+    else {
+        line = line.substr(line.find(" ") + 1, line.length());
+    }
+}
+
+SPIMI::SPIMI(const std::string& savingPath, std::map<short, fs::directory_entry>& number_filename) : _savingPath(savingPath), _number_filename(number_filename)
 {
 
 }
 
-void SPIMI::generateInvertedIndexBySPIMI(const std::string& directoryPath)
+
+void SPIMI::generateInvertedIndexBySPIMI(unsigned long long& _bytesToIndexLeft)
 {
+    
     MEMORYSTATUSEX statex;
     statex.dwLength = sizeof(statex);
     GlobalMemoryStatusEx(&statex);
@@ -104,7 +122,7 @@ void SPIMI::generateInvertedIndexBySPIMI(const std::string& directoryPath)
    
   
     std::ifstream file;
-    std::string outputPath = "SPIMI\\invertedIndex";
+    std::string outputPath = _savingPath +"SPIMI\\";
     int j = 0;
     auto begin = clock();
     auto end = clock();
@@ -113,8 +131,8 @@ void SPIMI::generateInvertedIndexBySPIMI(const std::string& directoryPath)
     double memoryCounter = 0;
     int blockCounter = 0;
 
-
-    for (auto i : number_filename) {
+   
+    for (auto i : _number_filename) {
         ++j;
 
         //-------------------------statistic--------------------------------
@@ -137,6 +155,9 @@ void SPIMI::generateInvertedIndexBySPIMI(const std::string& directoryPath)
        
         while (!file.eof()) {
             buf = file.get();
+
+            --_bytesToIndexLeft;
+
             if (buf < 65 || buf>122 || (buf > 90 && buf < 97)) {
                 if (!word.empty()) {
 
@@ -148,7 +169,7 @@ void SPIMI::generateInvertedIndexBySPIMI(const std::string& directoryPath)
 
                     if (memoryCounter > oneBlockMemory) {
                         GlobalMemoryStatusEx(&statex);
-                        printSortedIndex(outputPath, blockCounter);
+                        printSortedIndex(outputPath + "invertedBlock", blockCounter);
                         ++blockCounter;
                         memoryCounter = 0;
                         std::cout << "Block was written on hard drive!" << std::endl;
@@ -162,14 +183,15 @@ void SPIMI::generateInvertedIndexBySPIMI(const std::string& directoryPath)
         }
         file.close();
     }
-    printSortedIndex(outputPath, blockCounter);
+    printSortedIndex(outputPath + "invertedBlock", blockCounter);
 
-
+    
     std::cout << "Merge started" << std::endl;
     begin = clock();
-    mergeFiles("Index\\SPIMI\\");   //------------------------Merge blocks on hard drive
+    mergeFiles(outputPath);   //------------------------Merge blocks on hard drive
     end = clock();
     std::cout << "Merge ended succesfully in "<< double(end * 1.0 - begin) * 1000.0 / CLOCKS_PER_SEC<<" seconds"<< std::endl;
+    
 }
 
 IndexCompression& SPIMI::getCompressor()
@@ -181,9 +203,10 @@ IndexCompression& SPIMI::getCompressor()
 void SPIMI::printSortedIndex(std::string& outputPath, int& fileCounter)
 {
     std::map<std::string, std::set<int>> ordered;
-    for (auto i : _dataBuf) {
-        ordered.insert({ i.first, i.second });
-        _dataBuf.erase(_dataBuf.begin());
+
+    while(!_dataBuf.empty()) {
+        ordered.insert({ (*_dataBuf.begin()).first, (*_dataBuf.begin()).second });
+       _dataBuf.erase(_dataBuf.begin());
     }
     printInFile(ordered, outputPath + std::to_string(fileCounter));
     _dataBuf.clear();
@@ -191,7 +214,7 @@ void SPIMI::printSortedIndex(std::string& outputPath, int& fileCounter)
 
 void SPIMI::printInFile(std::map<std::string, std::set<int>>& dictionary, const std::string& indexName) {
     std::ofstream out;
-    out.open("Index\\" + indexName + ".txt");
+    out.open(indexName + ".txt");
     for (auto i : dictionary) {
         out << i.first << " ";
         for (auto j : i.second) {

@@ -11,9 +11,8 @@
 #include <filesystem>
 #include "PositionalIndex.h"
 #include "Btree.h"
-#include <filesystem>
+#include "SPIMI.h"
 
-namespace fs = std::filesystem;
 
 
 class Index {
@@ -37,9 +36,6 @@ protected:
 			return false;
 		}
 	};
-
-
-	void enumerateFilesInDir(const std::string& directoryPath);
 
 	void readWord(std::string& line, std::string& value);
 
@@ -115,12 +111,15 @@ protected:
 
 	std::map<std::string, std::set<short>> invertedIndex;  //access for DocVectorBuilder
 private:
+	std::string _savingPath;
+
 	std::map<std::string, std::set<short>> biwordIndex;
 	std::map<std::string, std::set<std::string>> threegramIndex;
 	PositionalIndex positionalIndex;
 	Btree* permutermIndex = new Btree;
+	SPIMI compressedSPIMIIndex;
 
-	void readFromFile(const std::string& fileName, std::map<std::string, std::set<short>>& index);
+	bool readFromFile(const std::string& fileName, std::map<std::string, std::set<short>>& index);
 
 	std::vector<std::string> separateString(std::string line);
 
@@ -153,14 +152,14 @@ private:
 public:
 	enum class IndexName {inverted, biword, positional};
 
-	Index(const std::string directoryPath);
-	Index();
+	Index(const std::string directoryPath, const std::string savingPath);
 
 	void generateInvertedIndex();
 	void generateBiwordIndex();
 	void generatePositionalIndex();
 	void generatePermutermIndex();
 	void generateThreegramIndex();
+	void generateBySPIMICompressedIndex();
 
 	unsigned long long getIndexingDirSize() { return _indexingDirSize; }
 	unsigned long long getIndexingSizeLeft() { return _bytesToIndexLeft; }

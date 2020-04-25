@@ -10,16 +10,16 @@
 
 int main()
 {
-    const std::string directoryPath = "Buf\\";
-    Index index(directoryPath);
+    //const std::string directoryPath = "Buf\\";
+    //Index index(directoryPath);
 
 
-    //inverted index generate
-    auto begin = clock();   //count time 
-    index.generateInvertedIndex();
-    auto end = clock();  //end counting
-    double elapsedMs = double(end * 1.0 - begin) * 1000.0 / CLOCKS_PER_SEC;
-    std::cout << "Time spend in millis: " << elapsedMs << std::endl;
+    ////inverted index generate
+    //auto begin = clock();   //count time 
+    //index.generateInvertedIndex();
+    //auto end = clock();  //end counting
+    //double elapsedMs = double(end * 1.0 - begin) * 1000.0 / CLOCKS_PER_SEC;
+    //std::cout << "Time spend in millis: " << elapsedMs << std::endl;
 
 
     //boolean search

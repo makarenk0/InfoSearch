@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "SPIMI.h"
+#include "Index.h"
 #include <string>
 #include <msclr\marshal_cppstd.h>
 
@@ -12,11 +12,12 @@ namespace Engine {
 	private:
 		::Index* index;
 	public:
-		void initIndex(String^ path);
+		void initIndex(String^ path, String^ savingPath);
 
 		void generateInvertedIndex();	
 		void generateBiwordIndex();
 		void generatePositionalIndex();
+		void generateIndexBySPIMI();
 
 		UInt64 getIndexingDirSize();
 		UInt64 getIndexingSizeLeft();
