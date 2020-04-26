@@ -5,6 +5,7 @@ using Interface.Tools.MVVM;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,6 +22,7 @@ namespace Interface.ViewModel
 
         private TimeSpan _indexingTimer;
         private Dictionary<int, IndexGeneratingFunction> _indexGenFunctions;
+        private bool[] _loadStatus = { false, false, false, false };
 
 
        
@@ -76,6 +78,7 @@ namespace Interface.ViewModel
         public UInt64 IndexingSpeed
         {
             get { return _model?.IndexingSpeed / 1000 ?? 0; }
+            set { _model.IndexingSpeed = value; }
         }
 
         public String IndexingPath
@@ -99,6 +102,19 @@ namespace Interface.ViewModel
         public String IndexingTime
         {
             get { return _indexingTimer.ToString(); }
+            set
+            {
+                _indexingTimer = TimeSpan.Parse(value);
+                OnPropertyChanged();
+            }
+        }
+
+        public bool[] LoadStatus
+        {
+            get
+            {
+                return _loadStatus;
+            }
         }
 
         public RelayCommand<object> ChooseDirCommand
@@ -156,7 +172,7 @@ namespace Interface.ViewModel
             if (result.ToString() == "Ok")
             {
                 String newPath = dialog.FileName.ToString();
-
+                _loadStatus = new bool[4];
                 StationManager.DataStorage.AddPath(newPath);
                 int id = StationManager.DataStorage.GetPathNum(newPath);
 
@@ -175,16 +191,13 @@ namespace Interface.ViewModel
             TimerCallback tm = new TimerCallback(IndexingPercentageIncrease); 
             Timer timer = new Timer(tm, 0, 1000, 1000);
             
-            
-
             CoreIsFree = false;
             SpinnerPosition = functionNum + 1;
             await Task.Run(() => {
                 _indexGenFunctions[functionNum]();
                 timer.Dispose();
                 CoreIsFree = true;
-                SizeLeft = 0;
-                IndexingPercentage = 100;
+                SaveAndResetStatistics(functionNum);
             });
             
         }
@@ -197,6 +210,16 @@ namespace Interface.ViewModel
             OnPropertyChanged("SizeLeft");
             OnPropertyChanged("IndexingPercentage");
             OnPropertyChanged("IndexingSpeed");
+        }
+
+        private void SaveAndResetStatistics(int functionNum)
+        {
+            _loadStatus[functionNum] = true;
+            OnPropertyChanged("LoadStatus");
+            SizeLeft = 0;
+            IndexingPercentage = 100;
+            IndexingSpeed = 0;
+            IndexingTime = "0:0:0";
         }
     }
 }

@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Interface.Tools;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Interface.View
 {
@@ -22,5 +13,16 @@ namespace Interface.View
         {
             InitializeComponent();
         }
+    }
+
+    public class LoadBoolToVisibilityConverter : BoolToValueConverter<Visibility>
+    {
+        #region Constructors and Destructors
+        public LoadBoolToVisibilityConverter()
+        {
+            this.TrueValue = Visibility.Visible;
+            this.FalseValue = Visibility.Hidden;
+        }
+        #endregion
     }
 }

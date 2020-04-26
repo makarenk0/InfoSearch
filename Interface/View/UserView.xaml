@@ -40,37 +40,51 @@
 
 
         <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" FontSize="25">Control panel</TextBlock>
-        <Grid Name="ControlPanel" Grid.Row="2" Grid.Column="0" Grid.RowSpan="8">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="40"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+        
+        <Grid Name="ControlPanel" Grid.Row="2" Grid.Column="0" Grid.RowSpan="8" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="110"/>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="110"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
 
             <TextBlock HorizontalAlignment="Center" FontSize="20">Index type</TextBlock>
+            <TextBlock Grid.Column="1" HorizontalAlignment="Center" FontSize="20">Loaded</TextBlock>
+            <TextBlock Grid.Column="2" HorizontalAlignment="Center" FontSize="20">Processing</TextBlock>
+
             <Button Name="GenerateInvertedIndexButton" Width="90" Height="25" Margin="0,0,0,0"  Grid.Row="1" Grid.Column="0" Content="Inverted" Command="{Binding GenerateIndexCommand}" CommandParameter="0"></Button>
-            <Button Name="GenerateBiwordIndexButton" Width="90" Height="25" Margin="0,0,0,0"  Grid.Row="2" Grid.Column="0" Content="Biword" Command="{Binding GenerateIndexCommand}" CommandParameter="1"></Button>
-            <Button Name="GeneratePositionalIndexButton" Width="90" Height="25" Margin="0,0,0,0"  Grid.Row="3" Grid.Column="0" Content="Positional" Command="{Binding GenerateIndexCommand}" CommandParameter="2"></Button>
-            <Button Name="GenerateIndexBySpimiButton" Background="DarkRed" Width="90" Height="25" Margin="0,0,0,0"  Grid.Row="4" Grid.Column="0" Content="SPIMI algorithm" Command="{Binding GenerateIndexCommand}" CommandParameter="3"></Button>
+                <Image Source="Images/loaded.png" Grid.Row="1" Grid.Column="1" Visibility="{Binding LoadStatus[0], Converter={local:LoadBoolToVisibilityConverter FalseValue=Hidden, TrueValue=Visible}}"/>
+                <Image Source="Images/notloaded.png" Grid.Row="1" Grid.Column="1"  Visibility="{Binding LoadStatus[0], Converter={local:LoadBoolToVisibilityConverter FalseValue=Visible, TrueValue=Hidden}}"/>
+
+                <Button Name="GenerateBiwordIndexButton" Width="90" Height="25" Margin="0,0,0,0"  Grid.Row="2" Grid.Column="0" Content="Biword" Command="{Binding GenerateIndexCommand}" CommandParameter="1"></Button>
+                <Image Source="Images/loaded.png" Grid.Row="2" Grid.Column="1" Visibility="{Binding LoadStatus[1], Converter={local:LoadBoolToVisibilityConverter FalseValue=Hidden, TrueValue=Visible}}"/>
+                <Image Source="Images/notloaded.png" Grid.Row="2" Grid.Column="1"  Visibility="{Binding LoadStatus[1], Converter={local:LoadBoolToVisibilityConverter FalseValue=Visible, TrueValue=Hidden}}"/>
+
+                <Button Name="GeneratePositionalIndexButton" Width="90" Height="25" Margin="0,0,0,0"  Grid.Row="3" Grid.Column="0" Content="Positional" Command="{Binding GenerateIndexCommand}" CommandParameter="2"></Button>
+                <Image Source="Images/loaded.png" Grid.Row="3" Grid.Column="1" Visibility="{Binding LoadStatus[2], Converter={local:LoadBoolToVisibilityConverter FalseValue=Hidden, TrueValue=Visible}}"/>
+                <Image Source="Images/notloaded.png" Grid.Row="3" Grid.Column="1"  Visibility="{Binding LoadStatus[2], Converter={local:LoadBoolToVisibilityConverter FalseValue=Visible, TrueValue=Hidden}}"/>
+
+                <Button Name="GenerateIndexBySpimiButton" Background="DarkRed" Width="90" Height="25" Margin="0,0,0,0"  Grid.Row="4" Grid.Column="0" Content="SPIMI algorithm" Command="{Binding GenerateIndexCommand}" CommandParameter="3"></Button>
+                <Image Source="Images/loaded.png" Grid.Row="4" Grid.Column="1" Visibility="{Binding LoadStatus[3], Converter={local:LoadBoolToVisibilityConverter FalseValue=Hidden, TrueValue=Visible}}"/>
+                <Image Source="Images/notloaded.png" Grid.Row="4" Grid.Column="1"  Visibility="{Binding LoadStatus[3], Converter={local:LoadBoolToVisibilityConverter FalseValue=Visible, TrueValue=Hidden}}"/>
 
 
-            <TextBlock Grid.Column="3" HorizontalAlignment="Center" FontSize="20">Status</TextBlock>
-            <fa:ImageAwesome Visibility="{Binding SpinnerVisibility, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Grid.Row="{Binding SpinnerPosition, UpdateSourceTrigger=PropertyChanged}" Grid.Column="4" Icon="Refresh" Spin="True" Height="25" Width="25" />
-        </Grid>
-        
-        <xrpb:RadialProgressBar Grid.Row="2" Grid.Column="1" Grid.RowSpan="5" Value="{Binding IndexingPercentage, UpdateSourceTrigger=PropertyChanged}"
+                <fa:ImageAwesome Visibility="{Binding SpinnerVisibility, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Grid.Row="{Binding SpinnerPosition, UpdateSourceTrigger=PropertyChanged}" Grid.Column="2" Icon="Refresh" Spin="True" Height="25" Width="25" />
+            </Grid>
+
+            <xrpb:RadialProgressBar Grid.Row="2" Grid.Column="1" Grid.RowSpan="5" Value="{Binding IndexingPercentage, UpdateSourceTrigger=PropertyChanged}"
 			    Width="200" Height="200" ArcWidth="25" InnerBackgroundBrush="#302f3d" Foreground="#4cd1fe"/>
         <TextBlock Margin="12,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1" Grid.RowSpan="5" Text="{Binding IndexingPercentage, UpdateSourceTrigger=PropertyChanged, StringFormat='\{0\}%'}" FontSize="30" Foreground="#4cd1fe" ></TextBlock>
 
