@@ -53,6 +53,10 @@
       "frameworks": {
         "netcoreapp3.1": {
           "dependencies": {
+            "DevExpressMvvm": {
+              "target": "Package",
+              "version": "[19.2.3, )"
+            },
             "FontAwesome.WPF": {
               "target": "Package",
               "version": "[4.7.0.9, )"

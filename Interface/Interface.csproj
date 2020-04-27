@@ -8,8 +8,8 @@
 
   <ItemGroup>
     <None Remove="View\Images\loaded.png" />
+    <None Remove="View\Images\logo.png" />
     <None Remove="View\Images\notloaded.png" />
-    <None Remove="View\notloaded.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DevExpressMvvm" Version="19.2.3" />
     <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
     <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
     <PackageReference Include="XamlRadialProgressBar" Version="1.0.3" />
@@ -30,10 +31,10 @@
     <Resource Include="View\Images\loaded.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="View\Images\notloaded.png">
+    <Resource Include="View\Images\logo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="View\notloaded.png">
+    <Resource Include="View\Images\notloaded.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

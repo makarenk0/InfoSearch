@@ -2,34 +2,42 @@
 using Interface.Tools.DataStorage;
 using Interface.Tools.Managers;
 using Interface.Tools.MVVM;
+using Interface.Tools.Navigation;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Interface.ViewModel
 {
-    class IndexViewModel : BaseViewModel
+    class EngineControlViewModel : BaseViewModel
     {
         private IndexModel _model;
         private delegate void IndexGeneratingFunction(); 
         private bool _coreIsFree = true;
         private int _spinnerPosition = 0;
-        private RelayCommand<object> _chooseDirCommand;
+        private RelayCommand<object> _addNewDirCommand;
         private RelayCommand<object> _generateIndexCommand;
+        private RelayCommand<object> _goToSearchingCommand;
 
         private TimeSpan _indexingTimer;
         private Dictionary<int, IndexGeneratingFunction> _indexGenFunctions;
-        private bool[] _loadStatus = { false, false, false, false };
+        private bool[] _loadStatus;
+        private TimeSpan[] _indexesTimeSpent; // = { new TimeSpan(0), new TimeSpan(0), new TimeSpan(0), new TimeSpan(0) };
+
+        private ObservableCollection<String> _indexedPaths;
 
 
        
-        public IndexViewModel()
+        public EngineControlViewModel()
         {
-            StationManager.Initialize(new SerializedDataStorage());
+            
+            _indexedPaths = new ObservableCollection<String>(StationManager.DataStorage.PathsList);
             _indexGenFunctions = new Dictionary<int, IndexGeneratingFunction>();
+            _loadStatus = new bool[4];
+            _indexesTimeSpent = new TimeSpan[4];
 
             IndexGeneratingFunction function0 = InvertedIndexGenerate;
             IndexGeneratingFunction function1 = BiwordIndexGenerate;
@@ -85,6 +93,7 @@ namespace Interface.ViewModel
         {
             get { return _model?.IndexingPath ?? ""; }
             set {
+                ChooseIndexingDir(value);
                 _model.IndexingPath = value;
                 OnPropertyChanged();
             }
@@ -109,11 +118,31 @@ namespace Interface.ViewModel
             }
         }
 
+        public TimeSpan[] IndexesTimeSpent
+        {
+            get { return _indexesTimeSpent; }
+        }
+
         public bool[] LoadStatus
         {
             get
             {
                 return _loadStatus;
+            }
+            set
+            {
+                _loadStatus = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<String> IndexedPathsList
+        {
+            get { return _indexedPaths; }
+            private set
+            {
+                _indexedPaths = value;
+                OnPropertyChanged();
             }
         }
 
@@ -121,7 +150,7 @@ namespace Interface.ViewModel
         {
             get
             {
-                return _chooseDirCommand ?? (_chooseDirCommand = new RelayCommand<object>(ChooseDirInplementation,
+                return _addNewDirCommand ?? (_addNewDirCommand = new RelayCommand<object>(AddNewDirInplementation,
                     o => CoreIsFree ));
             }
         }
@@ -135,7 +164,16 @@ namespace Interface.ViewModel
             }
         }
 
-        
+        public RelayCommand<object> GoToSearchingCommand
+        {
+            get
+            {
+                return _goToSearchingCommand ?? (_goToSearchingCommand = new RelayCommand<object>(GoToSearchingInplementation,
+                    o => CoreIsFree && !String.IsNullOrEmpty(IndexingPath)));
+            }
+        }
+
+
 
         public String SpinnerVisibility
         {
@@ -163,7 +201,7 @@ namespace Interface.ViewModel
             }
         }
 
-        private void ChooseDirInplementation(object obj)
+        private void AddNewDirInplementation(object obj)
         {
 
             var dialog = new CommonOpenFileDialog();
@@ -172,13 +210,19 @@ namespace Interface.ViewModel
             if (result.ToString() == "Ok")
             {
                 String newPath = dialog.FileName.ToString();
-                _loadStatus = new bool[4];
                 StationManager.DataStorage.AddPath(newPath);
-                int id = StationManager.DataStorage.GetPathNum(newPath);
-
-                _model = new IndexModel(newPath, FileFolderHelper.CreateOrPickIndexesFolder(id));  // creating a model to test C++ then
-                IndexingPath = dialog.FileName.ToString();
+                IndexedPathsList = new ObservableCollection<String>(StationManager.DataStorage.PathsList);
+                IndexingPath = newPath;
             }
+           
+        }
+
+        private void ChooseIndexingDir(String path)
+        {
+            LoadStatus = new bool[4];
+            _indexesTimeSpent = new TimeSpan[4];
+            int id = StationManager.DataStorage.GetPathNum(path);
+            _model = new IndexModel(path, FileFolderHelper.CreateOrPickIndexesFolder(id));  // creating a model to test C++ then
             OnPropertyChanged("WholeDirSize");
         }
 
@@ -215,11 +259,18 @@ namespace Interface.ViewModel
         private void SaveAndResetStatistics(int functionNum)
         {
             _loadStatus[functionNum] = true;
+            _indexesTimeSpent[functionNum] = _indexingTimer;
             OnPropertyChanged("LoadStatus");
+            OnPropertyChanged("IndexesTimeSpent");
             SizeLeft = 0;
             IndexingPercentage = 100;
             IndexingSpeed = 0;
             IndexingTime = "0:0:0";
+        }
+
+        private void GoToSearchingInplementation(object obj)
+        {
+            NavigationManager.Instance.Navigate(ViewType.UserInput);
         }
     }
 }

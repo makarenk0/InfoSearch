@@ -48,6 +48,11 @@ namespace Interface.Tools.DataStorage
             SaveChanges();
         }
 
+        public List<String> PathsList
+        {
+            get { return _indexedDirs.Keys.ToList(); }
+        }
+
         private void SaveChanges()
         {
             SerializationManager.Serialize(_indexedDirs, FileFolderHelper.StorageFilePath);

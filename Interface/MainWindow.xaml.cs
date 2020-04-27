@@ -11,7 +11,7 @@ namespace Interface
     {
         public MainWindow()
         {
-            DataContext = new IndexViewModel();
+            DataContext = new MainWindowViewModel();
             InitializeComponent();
         }
     }

@@ -1,4 +1,6 @@
 ﻿using Interface.Tools;
+using Interface.Tools.Navigation;
+using Interface.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -7,10 +9,11 @@ namespace Interface.View
     /// <summary>
     /// Логика взаимодействия для UserView.xaml
     /// </summary>
-    public partial class UserView : UserControl
+    public partial class EngineControlView : UserControl, INavigatable
     {
-        public UserView()
+        public EngineControlView()
         {
+            DataContext = new EngineControlViewModel();
             InitializeComponent();
         }
     }

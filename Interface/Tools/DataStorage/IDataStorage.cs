@@ -10,5 +10,7 @@ namespace Interface.Tools.DataStorage
         int GetPathNum(String path);
 
         void DeletePath(String path);
+
+        List<String> PathsList {get; }
     }
 }

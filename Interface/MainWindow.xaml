@@ -8,6 +8,6 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="720" Width="1280">
     <Grid>
-        <view:UserView></view:UserView>
+        <ContentControl Name="_contentControl" Content="{Binding Content, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"></ContentControl>
     </Grid>
 </Window>

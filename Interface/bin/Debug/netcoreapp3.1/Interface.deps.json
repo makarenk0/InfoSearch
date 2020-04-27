@@ -8,6 +8,7 @@
     ".NETCoreApp,Version=v3.1": {
       "Interface/1.0.0": {
         "dependencies": {
+          "DevExpressMvvm": "19.2.3",
           "Engine": "1.0.0",
           "FontAwesome.WPF": "4.7.0.9",
           "WindowsAPICodePack-Shell": "1.1.1",
@@ -15,6 +16,18 @@
         },
         "runtime": {
           "Interface.dll": {}
+        }
+      },
+      "DevExpressMvvm/19.2.3": {
+        "runtime": {
+          "lib/netcoreapp3.0/DevExpress.Mvvm.UI.dll": {
+            "assemblyVersion": "19.2.0.0",
+            "fileVersion": "19.2.0.0"
+          },
+          "lib/netcoreapp3.0/DevExpress.Mvvm.dll": {
+            "assemblyVersion": "19.2.0.0",
+            "fileVersion": "19.2.0.0"
+          }
         }
       },
       "FontAwesome.WPF/4.7.0.9": {
@@ -64,6 +77,13 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "DevExpressMvvm/19.2.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-QnZlv+9KmMaA0KSJ7xneiWF5Qxj7GG/iTUtB5ZdDIbroOzy3rZbfwbB7GcF6kiqUyzM2lf3cg1qV02Qr5vsGGg==",
+      "path": "devexpressmvvm/19.2.3",
+      "hashPath": "devexpressmvvm.19.2.3.nupkg.sha512"
     },
     "FontAwesome.WPF/4.7.0.9": {
       "type": "package",

@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "kyiRV6MzvxoO0yy2SNeTUlIrKRdad/51AaRtsXEdlzj+qmZf2/FvDkuZFjCu7m3tOV2W2VTVA5xQJcMlOUwQzQ==",
+  "dgSpecHash": "tSydnZuo2ZqgUooUQN8brkP21yugJxLZcwRmc0igMNYDJlXJ8pVFfHVaF6bTkOv3wj9plppTXxhYdhMA/COp0A==",
   "success": true,
   "projectFilePath": "C:\\Users\\defau\\Documents\\GitHub\\InfoSearch\\Interface\\Interface.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\defau\\.nuget\\packages\\devexpressmvvm\\19.2.3\\devexpressmvvm.19.2.3.nupkg.sha512",
     "C:\\Users\\defau\\.nuget\\packages\\fontawesome.wpf\\4.7.0.9\\fontawesome.wpf.4.7.0.9.nupkg.sha512",
     "C:\\Users\\defau\\.nuget\\packages\\windowsapicodepack-core\\1.1.1\\windowsapicodepack-core.1.1.1.nupkg.sha512",
     "C:\\Users\\defau\\.nuget\\packages\\windowsapicodepack-shell\\1.1.1\\windowsapicodepack-shell.1.1.1.nupkg.sha512",
