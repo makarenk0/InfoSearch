@@ -161,6 +161,8 @@ public:
 	void generateThreegramIndex();
 	void generateBySPIMICompressedIndex();
 
+
+	
 	unsigned long long getIndexingDirSize() { return _indexingDirSize; }
 	unsigned long long getIndexingSizeLeft() { return _bytesToIndexLeft; }
 
@@ -170,6 +172,8 @@ public:
 	std::set<short> booleanSearch(const std::string& request);
 	std::set<short> phraseSearch(std::string request);
 	std::set<short> positionalSearch(std::string request);
+
+	std::list<std::string> booleanSearchPaths(const std::string& request);
 
 	
 	std::map<std::string, std::set<short>> postWildcardQuery(std::string word);

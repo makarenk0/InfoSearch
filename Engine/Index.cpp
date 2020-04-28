@@ -343,6 +343,15 @@ std::set<short> Index::positionalSearch(std::string request)
     return result;
 }
 
+std::list<std::string> Index::booleanSearchPaths(const std::string& request)
+{
+    std::list<std::string> result;
+    for (auto i : booleanSearch(request)) {
+        result.push_back(number_filename[i].path().u8string());
+    }
+    return result;
+}
+
 std::set<short> Index::notSearch(const std::set<short>& list1) {
     std::set<short> result;
     std::set<short>::iterator it1 = list1.begin();

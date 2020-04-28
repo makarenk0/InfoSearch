@@ -1,5 +1,4 @@
 ﻿using Interface.Tools;
-using Interface.Tools.DataStorage;
 using Interface.Tools.Managers;
 using Interface.Tools.MVVM;
 using Interface.Tools.Navigation;
@@ -9,6 +8,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
+
+
 
 namespace Interface.ViewModel
 {
@@ -223,6 +224,7 @@ namespace Interface.ViewModel
             _indexesTimeSpent = new TimeSpan[4];
             int id = StationManager.DataStorage.GetPathNum(path);
             _model = new IndexModel(path, FileFolderHelper.CreateOrPickIndexesFolder(id));  // creating a model to test C++ then
+            ViewModelsSynchronizer._indexModel = _model;
             OnPropertyChanged("WholeDirSize");
         }
 

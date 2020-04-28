@@ -16,6 +16,8 @@ namespace Interface
         private UInt64 _indexingSizeDir = 0;
         private UInt64 _indexingSpeed = 0;
 
+        private String _searchRequest;
+        List<String> _searchResults;
 
 
         public IndexModel(String indexingPath, String savingPath)
@@ -86,7 +88,21 @@ namespace Interface
                 return _indexingSizeDir; 
             }
         }
-       
 
+        public String SearchRequest
+        {
+            get { return _searchRequest; }
+            set { _searchRequest = value; }
+        }
+
+        public void BooleanSearch()
+        {
+            _searchResults = _controller.booleanSearch(SearchRequest);
+        }
+
+        public List<String> SearchResults
+        {
+            get { return _searchResults; }
+        }
     }
 }

@@ -37,3 +37,14 @@ UInt64 Engine::Controller::getIndexingSizeLeft()
 {
 	return index->getIndexingSizeLeft();
 }
+
+Generic::List<String^>^ Engine::Controller::booleanSearch(String^ request)
+{
+	std::string unmanagedRequest = msclr::interop::marshal_as<std::string>(request);
+	Generic::List<String^>^ result = gcnew Generic::List<String^>();
+	for (auto i : index->booleanSearchPaths(unmanagedRequest)) {
+		String^ unmanagedStr = msclr::interop::marshal_as<String^>(i);
+		result->Add(unmanagedStr);
+	}
+	return result;
+}
