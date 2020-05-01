@@ -4,14 +4,19 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Interface.View"
+             xmlns:conv="clr-namespace:Interface.Tools"
              mc:Ignorable="d" 
              d:DesignHeight="720" d:DesignWidth="1280">
+
+    <UserControl.Resources>
+        <conv:PathToFilenameConverter x:Key="PathToFilenameConverter"/>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
+            <RowDefinition Height="50"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>
@@ -19,20 +24,25 @@
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Image Grid.Column="0" MaxHeight="300" Source="Images/logo.png" Visibility="Visible"/>
-        <Button Grid.Column="0" Grid.Row="2" Width="180" Height="40" VerticalAlignment="Top" FontSize="20" Command="{Binding GoToEngineControl}">To engine control</Button>
+        <Button Grid.Column="0" Grid.Row="1" Width="180" Height="40" VerticalAlignment="Center" FontSize="20" Command="{Binding GoToEngineControl}">To engine control</Button>
 
-        <TextBox Margin="0,50,0,0" Grid.Row="0" Grid.Column="1" Width="500" Grid.ColumnSpan="2" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="19" Text ="{Binding SearchInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+        <TextBox Margin="0,50,0,0" Grid.Row="0" Grid.Column="1" Width="500" Grid.ColumnSpan="2" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="19" Text ="{Binding SearchInput, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"></TextBox>
         <Button Margin="0,50,180,0" Grid.Column="2" Grid.Row="0" Width="90" Height="30" VerticalAlignment="Top" FontSize="18" Command="{Binding SearchCommand}">Search</Button>
 
-        <TextBlock Margin="0,120,0,0" Grid.Row="0" Grid.Column="1" Grid.RowSpan="3"  ScrollViewer.VerticalScrollBarVisibility="Visible" Text="{Binding TestResults, UpdateSourceTrigger=PropertyChanged}">
-     
-            
-            <!--  <Hyperlink Command="{Binding TestClick}">
-            Launch Payments Portal
-        </Hyperlink> <LineBreak/>
-            <Hyperlink Command="{Binding TestClick}">
-            Launch Payments Portal
-        </Hyperlink> -->
-        </TextBlock>
+        <ScrollViewer Width="620" Margin="0,120,0,0" Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" Grid.ColumnSpan="2" HorizontalAlignment="Left">
+            <ItemsControl ItemsSource="{Binding RequestResults}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="0,20,0,0">
+                             <Hyperlink FontSize="20" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl},Mode=FindAncestor},Path=DataContext.OpenFileCommand}" CommandParameter="{Binding}">
+                                 <TextBlock Text="{Binding Converter={StaticResource PathToFilenameConverter}}"/>
+                              </Hyperlink>
+                            <LineBreak/>
+                            <TextBlock Foreground="Gray" Name="FullPath" Text="{Binding}"></TextBlock>
+                        </TextBlock>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
     </Grid>
 </UserControl>

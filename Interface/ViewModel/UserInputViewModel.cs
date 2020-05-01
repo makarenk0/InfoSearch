@@ -3,6 +3,9 @@ using Interface.Tools.Managers;
 using Interface.Tools.MVVM;
 using Interface.Tools.Navigation;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Interface.ViewModel
@@ -11,18 +14,40 @@ namespace Interface.ViewModel
     {
         private RelayCommand<object> _goToEngineControlCommand;
         private RelayCommand<object> _searchCommand;
+        private RelayCommand<object> _openFileCommand;
 
-        private String _testResults;
+        private List<String> _requestResults;
 
-        public String TestResults
+        public List<String> RequestResults
         {
-            get { return _testResults; }
+            get {
+                
+                return _requestResults; 
+            }
+            set 
+            { 
+                _requestResults = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public List<String> FoundFileNames
+        {
+            get
+            {
+                List<String> _foundFileNames = new List<String>();
+                foreach (var path in _requestResults)
+                {
+                    _foundFileNames.Add(path.Substring(path.LastIndexOf('\u005c') + 1));
+                }
+                return _foundFileNames;
+            }
         }
 
 
         public UserInputViewModel()
         {
-
+            _requestResults = new List<String>();
         }
         #region PropertiesAndCommandsForView
         public String SearchInput
@@ -48,6 +73,14 @@ namespace Interface.ViewModel
                     o => true));
             }
         }
+        public RelayCommand<object> OpenFileCommand
+        {
+            get
+            {
+                return _openFileCommand ?? (_openFileCommand = new RelayCommand<object>(OpenFileImp,
+                    o => true));
+            }
+        }
 
 
 
@@ -65,14 +98,17 @@ namespace Interface.ViewModel
             await Task.Run(() =>
             {
                 ViewModelsSynchronizer._indexModel.BooleanSearch();
-                _testResults = "";
-                foreach (String docName in ViewModelsSynchronizer._indexModel.SearchResults)
-                {
-                    _testResults += docName + "\n";
-                }
-                OnPropertyChanged("TestResults");
+                RequestResults = ViewModelsSynchronizer._indexModel.SearchResults;
             });
-        }      
+        }   
+        
+        private void OpenFileImp(object obj)
+        {
+            if (File.Exists(obj.ToString()))
+            {
+                Process.Start(new ProcessStartInfo("explorer.exe", obj.ToString()));
+            }
+        }
 
 
 

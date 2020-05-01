@@ -1,7 +1,7 @@
 ﻿using Interface.Tools.Navigation;
 using Interface.ViewModel;
 using System.Windows.Controls;
-
+using Interface.Tools;
 
 namespace Interface.View
 {
@@ -16,4 +16,5 @@ namespace Interface.View
             InitializeComponent();
         }
     }
+
 }
